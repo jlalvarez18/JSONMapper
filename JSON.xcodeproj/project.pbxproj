@@ -7,12 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0D032F8C1A8CFE79002E8C2D /* tweets.json in Resources */ = {isa = PBXBuildFile; fileRef = 0D032F8B1A8CFE79002E8C2D /* tweets.json */; };
 		0DA7A1151A8BBF5800749F82 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DA7A1141A8BBF5800749F82 /* AppDelegate.swift */; };
 		0DA7A1171A8BBF5800749F82 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DA7A1161A8BBF5800749F82 /* ViewController.swift */; };
 		0DA7A11A1A8BBF5800749F82 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0DA7A1181A8BBF5800749F82 /* Main.storyboard */; };
 		0DA7A11C1A8BBF5800749F82 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0DA7A11B1A8BBF5800749F82 /* Images.xcassets */; };
 		0DA7A11F1A8BBF5800749F82 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0DA7A11D1A8BBF5800749F82 /* LaunchScreen.xib */; };
 		0DA7A12B1A8BBF5800749F82 /* JSONTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DA7A12A1A8BBF5800749F82 /* JSONTests.swift */; };
+		0DA7A1351A8BBF6500749F82 /* JSONMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DA7A1341A8BBF6500749F82 /* JSONMapper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -26,6 +28,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0D032F8B1A8CFE79002E8C2D /* tweets.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = tweets.json; sourceTree = "<group>"; };
 		0DA7A10F1A8BBF5800749F82 /* JSON.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JSON.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0DA7A1131A8BBF5800749F82 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0DA7A1141A8BBF5800749F82 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -36,6 +39,7 @@
 		0DA7A1241A8BBF5800749F82 /* JSONTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = JSONTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0DA7A1291A8BBF5800749F82 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0DA7A12A1A8BBF5800749F82 /* JSONTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONTests.swift; sourceTree = "<group>"; };
+		0DA7A1341A8BBF6500749F82 /* JSONMapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONMapper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,6 +87,7 @@
 				0DA7A11B1A8BBF5800749F82 /* Images.xcassets */,
 				0DA7A11D1A8BBF5800749F82 /* LaunchScreen.xib */,
 				0DA7A1121A8BBF5800749F82 /* Supporting Files */,
+				0DA7A1341A8BBF6500749F82 /* JSONMapper.swift */,
 			);
 			path = JSON;
 			sourceTree = "<group>";
@@ -90,6 +95,7 @@
 		0DA7A1121A8BBF5800749F82 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				0D032F8B1A8CFE79002E8C2D /* tweets.json */,
 				0DA7A1131A8BBF5800749F82 /* Info.plist */,
 			);
 			name = "Supporting Files";
@@ -192,6 +198,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0D032F8C1A8CFE79002E8C2D /* tweets.json in Resources */,
 				0DA7A11A1A8BBF5800749F82 /* Main.storyboard in Resources */,
 				0DA7A11F1A8BBF5800749F82 /* LaunchScreen.xib in Resources */,
 				0DA7A11C1A8BBF5800749F82 /* Images.xcassets in Resources */,
@@ -212,6 +219,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0DA7A1351A8BBF6500749F82 /* JSONMapper.swift in Sources */,
 				0DA7A1171A8BBF5800749F82 /* ViewController.swift in Sources */,
 				0DA7A1151A8BBF5800749F82 /* AppDelegate.swift in Sources */,
 			);
@@ -339,6 +347,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = JSON/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -349,6 +358,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = JSON/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -367,6 +377,7 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = JSONTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/JSON.app/JSON";
@@ -382,6 +393,7 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = JSONTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/JSON.app/JSON";
@@ -407,6 +419,7 @@
 				0DA7A1301A8BBF5800749F82 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		0DA7A1311A8BBF5800749F82 /* Build configuration list for PBXNativeTarget "JSONTests" */ = {
 			isa = XCConfigurationList;
@@ -415,6 +428,7 @@
 				0DA7A1331A8BBF5800749F82 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
