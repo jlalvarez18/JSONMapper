@@ -8,14 +8,14 @@
 
 import Foundation
 
-typealias JSONDict = [String: AnyObject]
-typealias JSONArray = [JSONDict]
+public typealias JSONDict = [String: AnyObject]
+public typealias JSONArray = [JSONDict]
 
-protocol JSONMappable {
+public protocol JSONMappable {
     init(mapper: JSONMapper<Self>)
 }
 
-enum ValueType {
+public enum ValueType {
     case Bool
     case Number
     case String
@@ -36,33 +36,23 @@ struct JSONDateFormatter {
     }
 }
 
-class JSONMapper <N: JSONMappable> {
+public class JSONMapper <N: JSONMappable> {
     
     var jsonObject: JSONDict!
     
-    init() {}
+    public init() {}
     
-    func map(data: NSData) -> [N]? {
+    public func map(data: NSData) -> [N]? {
         var error: NSError?
         
-        let json: AnyObject? = NSJSONSerialization.JSONObjectWithData(data, options: .allZeros, error: &error)
-        
-        if json == nil {
-            return nil
-        }
-        
-        if let dict = json as? JSONDict {
-            return [map(dict)]
-        }
-        
-        if let array = json as? JSONArray {
-            return map(array)
+        if let json: AnyObject = NSJSONSerialization.JSONObjectWithData(data, options: .allZeros, error: &error) {
+            return map(json)
         }
         
         return nil
     }
     
-    func map(jsonFileURL url: NSURL) -> [N]? {
+    public func map(jsonFileURL url: NSURL) -> [N]? {
         if let data = NSData(contentsOfURL: url) {
             return map(data)
         }
@@ -70,7 +60,7 @@ class JSONMapper <N: JSONMappable> {
         return nil
     }
     
-    func map(json: JSONDict) -> N {
+    public func map(json: JSONDict) -> N {
         jsonObject = json
         
         let object = N(mapper: self)
@@ -78,7 +68,7 @@ class JSONMapper <N: JSONMappable> {
         return object
     }
     
-    func map(jsonObjects: JSONArray) -> [N] {
+    public func map(jsonObjects: JSONArray) -> [N] {
         let results = jsonObjects.map({ (json: JSONDict) -> N in
             return self.map(json)
         })
@@ -86,7 +76,27 @@ class JSONMapper <N: JSONMappable> {
         return results
     }
     
-    func valueTypeFor(key: String) -> ValueType {
+    public func map(array: [AnyObject]) -> [N]? {
+        if let array = array as? JSONArray {
+            return self.map(array)
+        }
+        
+        return nil
+    }
+    
+    public func map(object: AnyObject) -> [N]? {
+        if let dict = object as? JSONDict {
+            return [map(dict)]
+        }
+        
+        if let array = object as? JSONArray {
+            return map(array)
+        }
+        
+        return nil
+    }
+    
+    public func valueTypeFor(key: String) -> ValueType {
         if let value: AnyObject = valueFor(key) {
             switch value {
             case let number as NSNumber:
@@ -109,7 +119,7 @@ class JSONMapper <N: JSONMappable> {
         return .Null
     }
     
-    subscript(key: String) -> AnyObject? {
+    public subscript(key: String) -> AnyObject? {
         return valueFor(key)
     }
 }
@@ -145,11 +155,11 @@ private extension JSONMapper {
 // MARK: NSDate
 
 extension JSONMapper {
-
-    typealias DateTransformerFromInt = (value: Int) -> NSDate?
-    typealias DateTransformerFromString = (value: String) -> NSDate?
     
-    func dateFromIntFor(key: String, transform: DateTransformerFromInt) -> NSDate? {
+    public typealias DateTransformerFromInt = (value: Int) -> NSDate?
+    public typealias DateTransformerFromString = (value: String) -> NSDate?
+    
+    public func dateFromIntFor(key: String, transform: DateTransformerFromInt) -> NSDate? {
         if let value = intFor(key) {
             return transform(value: value)
         }
@@ -157,7 +167,7 @@ extension JSONMapper {
         return nil
     }
     
-    func dateFromStringFor(key: String, transform: DateTransformerFromString) -> NSDate? {
+    public func dateFromStringFor(key: String, transform: DateTransformerFromString) -> NSDate? {
         if let value = stringFor(key) {
             return transform(value: value)
         }
@@ -170,7 +180,7 @@ extension JSONMapper {
 
 extension JSONMapper {
     
-    func urlFrom(key: String) -> NSURL? {
+    public func urlFrom(key: String) -> NSURL? {
         if let value = stringFor(key) {
             return NSURL(string: value)
         }
@@ -183,11 +193,11 @@ extension JSONMapper {
 
 extension JSONMapper {
     
-    func stringFor(key: String) -> String? {
+    public func stringFor(key: String) -> String? {
         return valueFor(key) as? String
     }
     
-    func stringValueFor(key: String) -> String {
+    public func stringValueFor(key: String) -> String {
         if let value = stringFor(key) {
             return value
         }
@@ -200,11 +210,11 @@ extension JSONMapper {
 
 extension JSONMapper {
     
-    func intFor(key: String) -> Int? {
+    public func intFor(key: String) -> Int? {
         return valueFor(key) as? Int
     }
     
-    func intValueFor(key: String) -> Int {
+    public func intValueFor(key: String) -> Int {
         if let value = intFor(key) {
             return value
         }
@@ -217,11 +227,11 @@ extension JSONMapper {
 
 extension JSONMapper {
     
-    func boolFor(key: String) -> Bool? {
+    public func boolFor(key: String) -> Bool? {
         return valueFor(key) as? Bool
     }
     
-    func boolValueFor(key: String) -> Bool {
+    public func boolValueFor(key: String) -> Bool {
         if let value = boolFor(key) {
             return value
         }
@@ -234,11 +244,11 @@ extension JSONMapper {
 
 extension JSONMapper {
     
-    func doubleFor(key: String) -> Double? {
+    public func doubleFor(key: String) -> Double? {
         return valueFor(key) as? Double
     }
     
-    func doubleValueFor(key: String) -> Double {
+    public func doubleValueFor(key: String) -> Double {
         if let value = doubleFor(key) {
             return value
         }
@@ -251,11 +261,11 @@ extension JSONMapper {
 
 extension JSONMapper {
     
-    func floatFor(key: String) -> Float? {
+    public func floatFor(key: String) -> Float? {
         return valueFor(key) as? Float
     }
     
-    func floatValueFor(key: String) -> Float {
+    public func floatValueFor(key: String) -> Float {
         if let value = floatFor(key) {
             return value
         }
@@ -268,11 +278,11 @@ extension JSONMapper {
 
 extension JSONMapper {
     
-    func arrayFor(key: String) -> Array<AnyObject>? {
+    public func arrayFor(key: String) -> Array<AnyObject>? {
         return valueFor(key) as? Array<AnyObject>
     }
     
-    func arrayValueFor(key: String) -> Array<AnyObject> {
+    public func arrayValueFor(key: String) -> Array<AnyObject> {
         if let value = arrayFor(key) {
             return value
         }
@@ -285,11 +295,11 @@ extension JSONMapper {
 
 extension JSONMapper {
     
-    func dictionaryFor(key: String) -> JSONDict? {
+    public func dictionaryFor(key: String) -> JSONDict? {
         return valueFor(key) as? JSONDict
     }
     
-    func dictionaryValueFor(key: String) -> JSONDict {
+    public func dictionaryValueFor(key: String) -> JSONDict {
         if let value = dictionaryFor(key) {
             return value
         }
@@ -302,7 +312,7 @@ extension JSONMapper {
 
 extension JSONMapper {
     
-    func objectArrayFor<T: JSONMappable>(key: String) -> [T]? {
+    public func objectArrayFor<T: JSONMappable>(key: String) -> [T]? {
         if let arrayValues = valueFor(key) as? JSONArray {
             let mapper = JSONMapper<T>()
             
@@ -316,7 +326,7 @@ extension JSONMapper {
         return nil
     }
     
-    func objectArrayValueFor<T: JSONMappable>(key: String) -> [T] {
+    public func objectArrayValueFor<T: JSONMappable>(key: String) -> [T] {
         if let values: [T] = objectArrayFor(key) {
             return values
         }
@@ -324,7 +334,7 @@ extension JSONMapper {
         return []
     }
     
-    func objectFor<T: JSONMappable>(key: String) -> T? {
+    public func objectFor<T: JSONMappable>(key: String) -> T? {
         if let dict = dictionaryFor(key) {
             let mapper = JSONMapper<T>()
             
@@ -340,19 +350,19 @@ extension JSONMapper {
 // MARK: Transforms
 
 extension String {
-    func transform<T>(block: (value: String) -> T?) -> T? {
+    public func transform<T>(block: (value: String) -> T?) -> T? {
         return block(value: self)
     }
 }
 
 extension Int {
-    func transform<T>(block: (value: Int) -> T?) -> T? {
+    public func transform<T>(block: (value: Int) -> T?) -> T? {
         return block(value: self)
     }
 }
 
 extension Double {
-    func transform<T>(block: (value: Double) -> T?) -> T? {
+    public func transform<T>(block: (value: Double) -> T?) -> T? {
         return block(value: self)
     }
 }
@@ -362,5 +372,3 @@ extension Float {
         return block(value: self)
     }
 }
-
-
