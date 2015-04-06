@@ -42,6 +42,34 @@ class JSONMapper <N: JSONMappable> {
     
     init() {}
     
+    func map(data: NSData) -> [N]? {
+        var error: NSError?
+        
+        let json: AnyObject? = NSJSONSerialization.JSONObjectWithData(data, options: .allZeros, error: &error)
+        
+        if json == nil {
+            return nil
+        }
+        
+        if let dict = json as? JSONDict {
+            return [map(dict)]
+        }
+        
+        if let array = json as? JSONArray {
+            return map(array)
+        }
+        
+        return nil
+    }
+    
+    func map(jsonFileURL url: NSURL) -> [N]? {
+        if let data = NSData(contentsOfURL: url) {
+            return map(data)
+        }
+        
+        return nil
+    }
+    
     func map(json: JSONDict) -> N {
         jsonObject = json
         
@@ -62,7 +90,7 @@ class JSONMapper <N: JSONMappable> {
         if let value: AnyObject = valueFor(key) {
             switch value {
             case let number as NSNumber:
-                if number.isBool {
+                if number.isBool() {
                     return .Bool
                 } else {
                     return .Number
@@ -335,85 +363,4 @@ extension Float {
     }
 }
 
-// MARK: - NSNumber: Comparable
 
-private let trueNumber = NSNumber(bool: true)
-private let falseNumber = NSNumber(bool: false)
-private let trueObjCType = String.fromCString(trueNumber.objCType)
-private let falseObjCType = String.fromCString(falseNumber.objCType)
-
-extension NSNumber: Comparable {
-    var isBool:Bool {
-        get {
-            let objCType = String.fromCString(self.objCType)
-            if (self.compare(trueNumber) == NSComparisonResult.OrderedSame && objCType == trueObjCType) || (self.compare(falseNumber) == NSComparisonResult.OrderedSame && objCType == falseObjCType){
-                return true
-            } else {
-                return false
-            }
-        }
-    }
-}
-
-public func ==(lhs: NSNumber, rhs: NSNumber) -> Bool {
-    switch (lhs.isBool, rhs.isBool) {
-    case (false, true):
-        return false
-    case (true, false):
-        return false
-    default:
-        return lhs.compare(rhs) == NSComparisonResult.OrderedSame
-    }
-}
-
-public func !=(lhs: NSNumber, rhs: NSNumber) -> Bool {
-    return !(lhs == rhs)
-}
-
-public func <(lhs: NSNumber, rhs: NSNumber) -> Bool {
-    
-    switch (lhs.isBool, rhs.isBool) {
-    case (false, true):
-        return false
-    case (true, false):
-        return false
-    default:
-        return lhs.compare(rhs) == NSComparisonResult.OrderedAscending
-    }
-}
-
-public func >(lhs: NSNumber, rhs: NSNumber) -> Bool {
-    
-    switch (lhs.isBool, rhs.isBool) {
-    case (false, true):
-        return false
-    case (true, false):
-        return false
-    default:
-        return lhs.compare(rhs) == NSComparisonResult.OrderedDescending
-    }
-}
-
-public func <=(lhs: NSNumber, rhs: NSNumber) -> Bool {
-    
-    switch (lhs.isBool, rhs.isBool) {
-    case (false, true):
-        return false
-    case (true, false):
-        return false
-    default:
-        return lhs.compare(rhs) != NSComparisonResult.OrderedDescending
-    }
-}
-
-public func >=(lhs: NSNumber, rhs: NSNumber) -> Bool {
-    
-    switch (lhs.isBool, rhs.isBool) {
-    case (false, true):
-        return false
-    case (true, false):
-        return false
-    default:
-        return lhs.compare(rhs) != NSComparisonResult.OrderedAscending
-    }
-}
