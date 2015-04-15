@@ -27,11 +27,11 @@ public enum ValueType {
 public struct JSONDateFormatter {
     private static var formatters: [String: NSDateFormatter] = [:]
     
-    static func registerDateFormatter(formatter: NSDateFormatter, withKey key: String) {
+    public static func registerDateFormatter(formatter: NSDateFormatter, withKey key: String) {
         formatters[key] = formatter
     }
     
-    static func dateFormatterWith(key: String) -> NSDateFormatter? {
+    public static func dateFormatterWith(key: String) -> NSDateFormatter? {
         return formatters[key]
     }
 }
