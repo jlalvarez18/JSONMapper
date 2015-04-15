@@ -24,7 +24,7 @@ public enum ValueType {
     case Null
 }
 
-struct JSONDateFormatter {
+public struct JSONDateFormatter {
     private static var formatters: [String: NSDateFormatter] = [:]
     
     static func registerDateFormatter(formatter: NSDateFormatter, withKey key: String) {

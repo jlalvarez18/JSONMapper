@@ -18,10 +18,10 @@ extension UIColor {
         var str = hex.uppercaseString
         
         if str.hasPrefix("#") {
-            str = str.substring(1..<countElements(str))!
+            str = str.substring(1..<count(str))!
         }
         
-        if countElements(str) != 6 {
+        if count(str) != 6 {
             fatalError("hex must have 6 charachters: \(hex)")
         }
         

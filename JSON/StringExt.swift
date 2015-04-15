@@ -11,7 +11,7 @@ import Foundation
 extension String {
     
     func substring(range: Range<Int>) -> String? {
-        if range.startIndex < 0 || range.endIndex > countElements(self) {
+        if range.startIndex < 0 || range.endIndex > count(self) {
             return nil
         }
         
