@@ -15,15 +15,6 @@ public protocol JSONMappable {
     init(mapper: JSONMapper<Self>)
 }
 
-public enum ValueType {
-    case Bool
-    case Number
-    case String
-    case Array
-    case Dictionary
-    case Null
-}
-
 public struct JSONDateFormatter {
     private static var formatters: [String: NSDateFormatter] = [:]
     
@@ -95,50 +86,26 @@ public class JSONMapper <N: JSONMappable> {
         
         return nil
     }
-    
-    public func valueTypeFor(keyPath: String) -> ValueType {
-        if let value: AnyObject = valueFor(keyPath) {
-            switch value {
-            case let number as NSNumber:
-                if number.isBool() {
-                    return .Bool
-                } else {
-                    return .Number
-                }
-            case let string as String:
-                return .String
-            case let array as [AnyObject]:
-                return .Array
-            case let dict as [String: AnyObject]:
-                return .Dictionary
-            default:
-                return .Null
-            }
-        }
-        
-        return .Null
-    }
-    
-    public subscript(keyPath: String) -> AnyObject? {
-        return valueFor(keyPath)
-    }
 }
 
 private extension JSONMapper {
     
     func valueFor(keyPath: String) -> AnyObject? {
-        return valueFor(keyPath.componentsSeparatedByString("."), dictionary: jsonObject)
+        return valueFor(keyPath, dictionary: jsonObject)
     }
     
-    func valueFor(keys: [String], dictionary: JSONDict) -> AnyObject? {
+    func valueFor(keyPath: String, dictionary: JSONDict) -> AnyObject? {
+        let keys = keyPath.componentsSeparatedByString(".")
+        
         if let key = keys.first, let object: AnyObject = dictionary[key] {
             switch object {
             case is NSNull:
                 return nil
             case let dict as JSONDict where keys.count > 1:
                 let tail = Array(keys[1..<keys.count])
+                let tailString = ".".join(tail)
                 
-                return valueFor(tail, dictionary: dict)
+                return valueFor(tailString, dictionary: dict)
             default:
                 return object
             }
@@ -191,6 +158,14 @@ extension JSONMapper {
         
         return nil
     }
+    
+    public func urlValueFrom(keyPath: String, defaultValue: NSURL) -> NSURL {
+        if let url = urlFrom(keyPath) {
+            return url
+        }
+        
+        return defaultValue
+    }
 }
 
 // MARK: String
@@ -201,12 +176,12 @@ extension JSONMapper {
         return valueFor(keyPath) as? String
     }
     
-    public func stringValueFor(keyPath: String) -> String {
+    public func stringValueFor(keyPath: String, defaultValue: String = "") -> String {
         if let value = stringFor(keyPath) {
             return value
         }
         
-        return ""
+        return defaultValue
     }
 }
 
@@ -218,12 +193,12 @@ extension JSONMapper {
         return valueFor(keyPath) as? Int
     }
     
-    public func intValueFor(keyPath: String) -> Int {
+    public func intValueFor(keyPath: String, defaultValue: Int = 0) -> Int {
         if let value = intFor(keyPath) {
             return value
         }
         
-        return 0
+        return defaultValue
     }
 }
 
@@ -252,12 +227,12 @@ extension JSONMapper {
         return nil
     }
     
-    public func boolValueFor(keyPath: String) -> Bool {
+    public func boolValueFor(keyPath: String, defaultValue: Bool = false) -> Bool {
         if let value = boolFor(keyPath) {
             return value
         }
         
-        return false
+        return defaultValue
     }
 }
 
@@ -269,12 +244,12 @@ extension JSONMapper {
         return valueFor(keyPath) as? Double
     }
     
-    public func doubleValueFor(keyPath: String) -> Double {
+    public func doubleValueFor(keyPath: String, defaultValue: Double = 0.0) -> Double {
         if let value = doubleFor(keyPath) {
             return value
         }
         
-        return 0.0
+        return defaultValue
     }
 }
 
@@ -286,12 +261,12 @@ extension JSONMapper {
         return valueFor(keyPath) as? Float
     }
     
-    public func floatValueFor(keyPath: String) -> Float {
+    public func floatValueFor(keyPath: String, defaultValue: Float = 0.0) -> Float {
         if let value = floatFor(keyPath) {
             return value
         }
         
-        return 0.0
+        return defaultValue
     }
 }
 
