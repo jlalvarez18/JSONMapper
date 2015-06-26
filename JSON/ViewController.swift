@@ -29,18 +29,12 @@ class ViewController: UIViewController {
         
         JSONDateFormatter.registerDateFormatter(dateFormatter, withKey: "TweetDateFormatter")
         
-        let jsonURL = NSBundle.mainBundle().URLForResource("tweets", withExtension: "json")
-        let jsonData = NSData(contentsOfURL: jsonURL!)
-        
-        var error: NSError?
-        if let json = NSJSONSerialization.JSONObjectWithData(jsonData!, options: NSJSONReadingOptions.allZeros, error: &error) as? JSONArray {
+        if let jsonURL = NSBundle.mainBundle().URLForResource("tweets", withExtension: "json") {
             let mapper = JSONMapper<Tweet>()
             
-            let tweets = mapper.map(json)
+            let tweets = mapper.map(jsonFileURL: jsonURL)
             
             println(tweets)
-        } else {
-            println(error)
         }
     }
 }
@@ -56,13 +50,8 @@ struct Tweet: JSONMappable {
         user = mapper.objectFor("user")!
         screenName = mapper.stringValueFor("user.screen_name")
         text = mapper.stringValueFor("text")
+        createdAt = mapper.dateFromStringFor("created_at", withFormatterKey: "TweetDateFormatter")
         favorited = mapper.boolValueFor("favorited")
-        
-        let dateFormatter = JSONDateFormatter.dateFormatterWith("TweetDateFormatter")!
-        
-        createdAt = mapper.dateFromStringFor("created_at", transform: { (value) -> NSDate? in
-            return dateFormatter.dateFromString(value)
-        })
     }
 }
 
@@ -84,15 +73,11 @@ struct User: JSONMappable {
         defaultProfile = mapper.boolValueFor("default_profile")
         followersCount = mapper.intValueFor("followers_count")
         
-        backgroundColor = mapper.stringFor("profile_background_color")?.transform({ (value) -> UIColor? in
+        backgroundColor = mapper.transform("profile_background_color", block: { (value) -> UIColor? in
             return UIColor.fromHex(value)
         })
         
-        let dateFormatter = JSONDateFormatter.dateFormatterWith("TweetDateFormatter")!
-        
-        createdAt = mapper.dateFromStringFor("created_at", transform: { (value) -> NSDate? in
-            return dateFormatter.dateFromString(value)
-        })
+        createdAt = mapper.dateFromStringFor("created_at", withFormatterKey: "TweetDateFormatter")
     }
 }
 
