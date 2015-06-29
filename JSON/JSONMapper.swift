@@ -152,7 +152,7 @@ extension JSONMapper {
 extension JSONMapper {
     
     public func urlFrom(keyPath: String) -> NSURL? {
-        if let value = stringFor(keyPath) {
+        if let value = stringFor(keyPath) where !value.isEmpty {
             return NSURL(string: value)
         }
         
