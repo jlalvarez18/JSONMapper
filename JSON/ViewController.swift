@@ -30,9 +30,7 @@ class ViewController: UIViewController {
         JSONDateFormatter.registerDateFormatter(dateFormatter, withKey: "TweetDateFormatter")
         
         if let jsonURL = NSBundle.mainBundle().URLForResource("tweets", withExtension: "json") {
-            let mapper = JSONMapper<Tweet>()
-            
-            let tweets = mapper.map(jsonFileURL: jsonURL)
+            let tweets = JSONAdapter<Tweet>.objectsFromJSONFile(jsonURL)
             
             println(tweets)
         }

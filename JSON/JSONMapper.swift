@@ -18,100 +18,80 @@ public protocol JSONMappable {
 public struct JSONDateFormatter {
     private static var formatters: [String: NSDateFormatter] = [:]
     
-    static func registerDateFormatter(formatter: NSDateFormatter, withKey key: String) {
+    public static func registerDateFormatter(formatter: NSDateFormatter, withKey key: String) {
         formatters[key] = formatter
     }
     
-    static func dateFormatterWith(key: String) -> NSDateFormatter? {
+    public static func dateFormatterWith(key: String) -> NSDateFormatter? {
         return formatters[key]
     }
 }
 
-public class JSONMapper <N: JSONMappable> {
+public class JSONAdapter <N: JSONMappable> {
     
-    var jsonObject: JSONDict!
+    private init() {}
     
-    public init() {}
-    
-    public func map(jsonFileURL url: NSURL) -> [N]? {
-        if let data = NSData(contentsOfURL: url) {
-            return map(data: data)
-        }
+    public class func objectFromJSONDictionary(dict: JSONDict) -> N {
+        let object = JSONMapper<N>(dictionary: dict)
         
-        return nil
+        return object.map()
     }
     
-    public func map(#dictionary: JSONDict) -> N {
-        jsonObject = dictionary
-        
-        let object = N(mapper: self)
-        
-        return object
-    }
-    
-    public func map(#array: JSONArray) -> [N] {
+    public class func objectsFromJSONArray(array: JSONArray) -> [N] {
         let results = array.map({ (json: JSONDict) -> N in
-            return self.map(dictionary: json)
+            return self.objectFromJSONDictionary(json)
         })
         
         return results
     }
     
-    public func map(#array: [AnyObject]) -> [N]? {
+    public class func objectsFromJSONFile(url: NSURL) -> [N]? {
+        if let data = NSData(contentsOfURL: url), let json: AnyObject = NSJSONSerialization.JSONObjectWithData(data, options: .allZeros, error: nil) {
+            return objectsFrom(json)
+        }
+        
+        return nil
+    }
+    
+    public class func objectsFrom(array: [AnyObject]) -> [N]? {
         if let array = array as? JSONArray {
-            return self.map(array: array)
+            return objectsFromJSONArray(array)
         }
         
         return nil
     }
     
-    public func map(#data: NSData) -> [N]? {
-        var error: NSError?
-        
-        if let json: AnyObject = NSJSONSerialization.JSONObjectWithData(data, options: .allZeros, error: &error) {
-            return map(object: json)
-        }
-        
-        return nil
-    }
-    
-    public func map(#object: AnyObject) -> [N]? {
+    public class func objectFrom(object: AnyObject) -> N? {
         if let dict = object as? JSONDict {
-            return [map(dictionary: dict)]
+            return objectFromJSONDictionary(dict)
         }
         
-        if let array = object as? JSONArray {
-            return map(array: array)
+        return nil
+    }
+    
+    public class func objectsFrom(array: AnyObject) -> [N]? {
+        if let array = array as? JSONArray {
+            return objectsFromJSONArray(array)
+        }
+        
+        if let array = array as? JSONArray {
+            return objectsFromJSONArray(array)
         }
         
         return nil
     }
 }
 
-private extension JSONMapper {
+public class JSONMapper <N: JSONMappable> {
     
-    func valueFor(keyPath: String) -> AnyObject? {
-        return valueFor(keyPath, dictionary: jsonObject)
+    public var rawJSONDictionary: JSONDict
+    
+    private init(dictionary: JSONDict) {
+        rawJSONDictionary = dictionary
     }
     
-    func valueFor(keyPath: String, dictionary: JSONDict) -> AnyObject? {
-        let keys = keyPath.componentsSeparatedByString(".")
-        
-        if let key = keys.first, let object: AnyObject = dictionary[key] {
-            switch object {
-            case is NSNull:
-                return nil
-            case let dict as JSONDict where keys.count > 1:
-                let tail = Array(keys[1..<keys.count])
-                let tailString = ".".join(tail)
-                
-                return valueFor(tailString, dictionary: dict)
-            default:
-                return object
-            }
-        }
-        
-        return nil
+    private func map() -> N {
+        return N(mapper: self)
     }
 }
 
@@ -310,11 +290,9 @@ extension JSONMapper {
     
     public func objectFor<T: JSONMappable>(keyPath: String) -> T? {
         if let dict = dictionaryFor(keyPath) {
-            let mapper = JSONMapper<T>()
+            let object = JSONMapper<T>(dictionary: dict)
             
-            let object = mapper.map(dictionary: dict)
-            
-            return object
+            return object.map()
         }
         
         return nil
@@ -322,9 +300,13 @@ extension JSONMapper {
     
     public func objectArrayFor<T: JSONMappable>(keyPath: String) -> [T]? {
         if let arrayValues = valueFor(keyPath) as? JSONArray {
-            let mapper = JSONMapper<T>()
+            let results = arrayValues.map { (dict: JSONDict) -> T in
+                let object = JSONMapper<T>(dictionary: dict)
+                
+                return object.map()
+            }
             
-            return mapper.map(array: arrayValues)
+            return results
         }
         
         return nil
@@ -372,5 +354,34 @@ extension JSONMapper {
         }
         
         return defaultValue
+    }
+}
+
+// MARK: Private Methods
+
+private extension JSONMapper {
+    
+    func valueFor(keyPath: String) -> AnyObject? {
+        return valueFor(keyPath, dictionary: rawJSONDictionary)
+    }
+    
+    func valueFor(keyPath: String, dictionary: JSONDict) -> AnyObject? {
+        let keys = keyPath.componentsSeparatedByString(".")
+        
+        if let key = keys.first, let object: AnyObject = dictionary[key] {
+            switch object {
+            case is NSNull:
+                return nil
+            case let dict as JSONDict where keys.count > 1:
+                let tail = Array(keys[1..<keys.count])
+                let tailString = ".".join(tail)
+                
+                return valueFor(tailString, dictionary: dict)
+            default:
+                return object
+            }
+        }
+        
+        return nil
     }
 }
