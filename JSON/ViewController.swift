@@ -44,7 +44,7 @@ struct Tweet: JSONMappable {
     let createdAt: NSDate?
     let favorited: Bool
 
-    init(mapper: JSONMapper<Tweet>) {
+    init(mapper: JSONMapper) {
         user = mapper.objectFor("user")!
         screenName = mapper.stringValueFor("user.screen_name")
         text = mapper.stringValueFor("text")
@@ -63,7 +63,7 @@ struct User: JSONMappable {
     let followersCount: Int
     let backgroundColor: UIColor?
     
-    init(mapper: JSONMapper<User>) {
+    init(mapper: JSONMapper) {
         name = mapper.stringValueFor("name")
         idString = mapper.stringValueFor("id_str")
         id = mapper.intValueFor("id")
@@ -84,7 +84,7 @@ struct URL: JSONMappable {
     let expandedURL: NSURL?
     let url: NSURL?
     
-    init(mapper: JSONMapper<URL>) {
+    init(mapper: JSONMapper) {
         displayURL = mapper.urlFrom("display_url")
         expandedURL = mapper.urlFrom("expanded_url")
         url = mapper.urlFrom("url")

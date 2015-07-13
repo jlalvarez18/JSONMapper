@@ -12,7 +12,7 @@ public typealias JSONDict = [String: AnyObject]
 public typealias JSONArray = [JSONDict]
 
 public protocol JSONMappable {
-    init(mapper: JSONMapper<Self>)
+    init(mapper: JSONMapper)
 }
 
 public struct JSONDateFormatter {
@@ -32,9 +32,10 @@ public class JSONAdapter <N: JSONMappable> {
     private init() {}
     
     public class func objectFromJSONDictionary(dict: JSONDict) -> N {
-        let object = JSONMapper<N>(dictionary: dict)
+        let mapper = JSONMapper(dictionary: dict)
+        let object = N(mapper: mapper)
         
-        return object.map()
+        return object
     }
     
     public class func objectsFromJSONArray(array: JSONArray) -> [N] {
@@ -82,16 +83,12 @@ public class JSONAdapter <N: JSONMappable> {
     }
 }
 
-public class JSONMapper <N: JSONMappable> {
+public class JSONMapper {
     
     public var rawJSONDictionary: JSONDict
     
     private init(dictionary: JSONDict) {
         rawJSONDictionary = dictionary
-    }
-    
-    private func map() -> N {
-        return N(mapper: self)
     }
 }
 
@@ -290,9 +287,10 @@ extension JSONMapper {
     
     public func objectFor<T: JSONMappable>(keyPath: String) -> T? {
         if let dict = dictionaryFor(keyPath) {
-            let object = JSONMapper<T>(dictionary: dict)
+            let mapper = JSONMapper(dictionary: dict)
+            let object = T(mapper: mapper)
             
-            return object.map()
+            return object
         }
         
         return nil
@@ -301,9 +299,10 @@ extension JSONMapper {
     public func objectArrayFor<T: JSONMappable>(keyPath: String) -> [T]? {
         if let arrayValues = valueFor(keyPath) as? JSONArray {
             let results = arrayValues.map { (dict: JSONDict) -> T in
-                let object = JSONMapper<T>(dictionary: dict)
+                let mapper = JSONMapper(dictionary: dict)
+                let object = T(mapper: mapper)
                 
-                return object.map()
+                return object
             }
             
             return results
