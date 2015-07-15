@@ -87,7 +87,7 @@ public class JSONMapper {
     
     public var rawJSONDictionary: JSONDict
     
-    private init(dictionary: JSONDict) {
+    public init(dictionary: JSONDict) {
         rawJSONDictionary = dictionary
     }
 }
@@ -264,6 +264,27 @@ extension JSONMapper {
     }
 }
 
+// MARK: Set
+
+extension JSONMapper {
+    
+    public func setFor<T>(keyPath: String) -> Set<T>? {
+        if let array: [T] = arrayFor(keyPath) {
+            return Set<T>(array)
+        }
+        
+        return nil
+    }
+    
+    public func setValueFor<T>(keyPath: String) -> Set<T> {
+        if let setValue: Set<T> = setFor(keyPath) {
+            return setValue
+        }
+        
+        return Set<T>()
+    }
+}
+
 // MARK: Dictionary
 
 extension JSONMapper {
@@ -294,6 +315,16 @@ extension JSONMapper {
         }
         
         return nil
+    }
+    
+    public func objectValueFor<T: JSONMappable>(keyPath: String) -> T {
+        if let object: T = objectFor(keyPath) {
+            return object
+        }
+        
+        let mapper = JSONMapper(dictionary: JSONDict())
+        
+        return T(mapper: mapper)
     }
     
     public func objectArrayFor<T: JSONMappable>(keyPath: String) -> [T]? {

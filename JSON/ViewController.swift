@@ -58,7 +58,7 @@ struct User: JSONMappable {
     let idString: String
     let id: Int
     let createdAt: NSDate?
-    let urls: [URL]?
+    let urls: [URL]
     let defaultProfile: Bool
     let followersCount: Int
     let backgroundColor: UIColor?
@@ -80,14 +80,16 @@ struct User: JSONMappable {
 }
 
 struct URL: JSONMappable {
-    let displayURL: NSURL?
-    let expandedURL: NSURL?
-    let url: NSURL?
+    let displayURL: NSURL
+    let expandedURL: NSURL
+    let url: NSURL
+    let indices: Set<Int>
     
     init(mapper: JSONMapper) {
-        displayURL = mapper.urlFrom("display_url")
-        expandedURL = mapper.urlFrom("expanded_url")
-        url = mapper.urlFrom("url")
+        displayURL = mapper.urlValueFrom("display_url", defaultValue: NSURL())
+        expandedURL = mapper.urlValueFrom("expanded_url", defaultValue: NSURL())
+        url = mapper.urlValueFrom("url", defaultValue: NSURL())
+        indices = mapper.setValueFor("indices")
     }
 }
 
