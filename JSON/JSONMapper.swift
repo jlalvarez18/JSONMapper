@@ -48,7 +48,13 @@ public class JSONAdapter <N: JSONMappable> {
     
     public class func objectsFromJSONFile(url: NSURL) -> [N]? {
         if let data = NSData(contentsOfURL: url), let json: AnyObject = NSJSONSerialization.JSONObjectWithData(data, options: .allZeros, error: nil) {
-            return objectsFrom(json)
+            if let dict = json as? JSONDict {
+                return [objectFromJSONDictionary(dict)]
+            }
+            
+            if let array = json as? JSONArray {
+                return objectsFromJSONArray(array)
+            }
         }
         
         return nil
@@ -62,21 +68,17 @@ public class JSONAdapter <N: JSONMappable> {
         return nil
     }
     
+    public class func objectsValueFrom(array: [AnyObject]) -> [N] {
+        if let array = objectsFrom(array) {
+            return array
+        }
+        
+        return []
+    }
+    
     public class func objectFrom(object: AnyObject) -> N? {
         if let dict = object as? JSONDict {
             return objectFromJSONDictionary(dict)
-        }
-        
-        return nil
-    }
-    
-    public class func objectsFrom(array: AnyObject) -> [N]? {
-        if let array = array as? JSONArray {
-            return objectsFromJSONArray(array)
-        }
-        
-        if let array = array as? JSONArray {
-            return objectsFromJSONArray(array)
         }
         
         return nil
