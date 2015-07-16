@@ -93,12 +93,27 @@ public class JSONAdapter <N: JSONMappable> {
     }
 }
 
-public class JSONMapper {
+public final class JSONMapper {
     
     public var rawJSONDictionary: JSONDict
     
     public init(dictionary: JSONDict) {
         rawJSONDictionary = dictionary
+    }
+}
+
+extension JSONMapper: DictionaryLiteralConvertible {
+    public typealias Key = String
+    public typealias Value = AnyObject
+    
+    public convenience init(dictionaryLiteral elements: (Key, Value)...) {
+        var dictionary = [String: AnyObject]()
+        
+        for (key_, value) in elements {
+            dictionary[key_] = value
+        }
+        
+        self.init(dictionary: dictionary)
     }
 }
 
