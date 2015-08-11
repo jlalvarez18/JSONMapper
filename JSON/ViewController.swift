@@ -67,7 +67,7 @@ struct User: JSONMappable {
         name = mapper.stringValueFor("name")
         idString = mapper.stringValueFor("id_str")
         id = mapper.intValueFor("id")
-        urls = mapper.objectArrayValueFor("entities.description.urls")
+        urls = mapper.objectArrayValueFor("entities.description.urls", defaultValue: [])
         defaultProfile = mapper.boolValueFor("default_profile")
         followersCount = mapper.intValueFor("followers_count")
         
