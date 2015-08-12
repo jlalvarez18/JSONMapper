@@ -11,9 +11,54 @@ import XCTest
 
 class JSONTests: XCTestCase {
     
+    let testDict: JSONDict = [
+        "string": "test_string",
+        "int": 277,
+        "bool": true,
+        "double": 922,
+        "float": 0.98,
+        "array": ["string1", "string2", "string3"],
+        "set": ["string1", "string2", "string3"],
+        "dictionary": ["key": "value"]
+    ]
+    
+    lazy var testDictArray: JSONArray = {
+        var testDictArray = JSONArray()
+        
+        for _ in 0..<10000 {
+            testDictArray.append(self.testDict)
+        }
+        
+        return testDictArray
+    }()
+    
+    struct TestObject: JSONMappable {
+        let string: String
+        let int: Int
+        let bool: Bool
+        let double: Double
+        let float: Float
+        let array: Array<String>
+        let set: Set<String>
+        let dictionary: JSONDict
+        
+        init(mapper: JSONMapper) {
+            string = mapper.stringValueFor("string")
+            int = mapper.intValueFor("int")
+            bool = mapper.boolValueFor("bool")
+            double = mapper.doubleValueFor("double")
+            float = mapper.floatValueFor("float")
+            array = mapper.arrayValueFor("array")
+            set = mapper.setValueFor("set")
+            dictionary = mapper.dictionaryValueFor("dictionary")
+        }
+    }
+    
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
+        
+        let asdf = testDictArray
     }
     
     override func tearDown() {
@@ -21,16 +66,9 @@ class JSONTests: XCTestCase {
         super.tearDown()
     }
     
-    func testExample() {
-        // This is an example of a functional test case.
-        XCTAssert(true, "Pass")
-    }
-    
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
+    func testOldPerformance() {
         self.measureBlock() {
-            // Put the code you want to measure the time of here.
+            let objects = JSONAdapter<TestObject>.objectsFromJSONArray(self.testDictArray)
         }
     }
-    
 }

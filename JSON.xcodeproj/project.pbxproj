@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0D032F8C1A8CFE79002E8C2D /* tweets.json in Resources */ = {isa = PBXBuildFile; fileRef = 0D032F8B1A8CFE79002E8C2D /* tweets.json */; };
-		0D4FDF9E1AC4AC1C0083ADFA /* NSNumberExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D4FDF9D1AC4AC1C0083ADFA /* NSNumberExt.swift */; };
+		0D1550F11B73ABF300DD0C00 /* JSONMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DA7A1341A8BBF6500749F82 /* JSONMapper.swift */; };
 		0D4FDFA01AC4AC350083ADFA /* UIColorExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D4FDF9F1AC4AC350083ADFA /* UIColorExt.swift */; };
 		0D7CDEBB1AD210A10069F678 /* StringExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D7CDEBA1AD210A10069F678 /* StringExt.swift */; };
 		0DA7A1151A8BBF5800749F82 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DA7A1141A8BBF5800749F82 /* AppDelegate.swift */; };
@@ -32,7 +32,6 @@
 
 /* Begin PBXFileReference section */
 		0D032F8B1A8CFE79002E8C2D /* tweets.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = tweets.json; sourceTree = "<group>"; };
-		0D4FDF9D1AC4AC1C0083ADFA /* NSNumberExt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSNumberExt.swift; sourceTree = "<group>"; };
 		0D4FDF9F1AC4AC350083ADFA /* UIColorExt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIColorExt.swift; sourceTree = "<group>"; };
 		0D7CDEBA1AD210A10069F678 /* StringExt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExt.swift; sourceTree = "<group>"; };
 		0DA7A10F1A8BBF5800749F82 /* JSON.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JSON.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -69,7 +68,6 @@
 		0D7CDEBC1AD210B50069F678 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				0D4FDF9D1AC4AC1C0083ADFA /* NSNumberExt.swift */,
 				0D4FDF9F1AC4AC350083ADFA /* UIColorExt.swift */,
 				0D7CDEBA1AD210A10069F678 /* StringExt.swift */,
 			);
@@ -241,7 +239,6 @@
 				0DA7A1151A8BBF5800749F82 /* AppDelegate.swift in Sources */,
 				0D4FDFA01AC4AC350083ADFA /* UIColorExt.swift in Sources */,
 				0D7CDEBB1AD210A10069F678 /* StringExt.swift in Sources */,
-				0D4FDF9E1AC4AC1C0083ADFA /* NSNumberExt.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -249,6 +246,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0D1550F11B73ABF300DD0C00 /* JSONMapper.swift in Sources */,
 				0DA7A12B1A8BBF5800749F82 /* JSONTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
