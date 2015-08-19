@@ -27,7 +27,7 @@ public struct JSONDateFormatter {
     }
 }
 
-public class JSONAdapter <N: JSONMappable> {
+public final class JSONAdapter <N: JSONMappable> {
     
     private init() {}
     
@@ -95,7 +95,7 @@ public class JSONAdapter <N: JSONMappable> {
 
 public final class JSONMapper {
     
-    public var rawJSONDictionary: JSONDict
+    public let rawJSONDictionary: JSONDict
     
     public init(dictionary: JSONDict) {
         rawJSONDictionary = dictionary
@@ -130,7 +130,7 @@ extension JSONMapper {
     }
     
     public func stringValueFor(keyPath: String) -> String {
-        return rawJSONDictionary.valueForKeyPath(keyPath) as! String
+        return stringFor(keyPath) ?? ""
     }
     
     public func stringValueFor(keyPath: String, defaultValue: String) -> String {
@@ -147,7 +147,7 @@ extension JSONMapper {
     }
     
     public func intValueFor(keyPath: String) -> Int {
-        return rawJSONDictionary.valueForKeyPath(keyPath) as! Int
+        return intFor(keyPath) ?? 0
     }
     
     public func intValueFor(keyPath: String, defaultValue: Int) -> Int {
@@ -179,7 +179,7 @@ extension JSONMapper {
     }
     
     public func boolValueFor(keyPath: String) -> Bool {
-        return rawJSONDictionary.valueForKeyPath(keyPath) as! Bool
+        return boolFor(keyPath) ?? false
     }
     
     public func boolValueFor(keyPath: String, defaultValue: Bool) -> Bool {
@@ -196,7 +196,7 @@ extension JSONMapper {
     }
     
     public func doubleValueFor(keyPath: String) -> Double {
-        return rawJSONDictionary.valueForKeyPath(keyPath) as! Double
+        return doubleFor(keyPath) ?? 0.0
     }
     
     public func doubleValueFor(keyPath: String, defaultValue: Double) -> Double {
@@ -213,7 +213,7 @@ extension JSONMapper {
     }
     
     public func floatValueFor(keyPath: String) -> Float {
-        return rawJSONDictionary.valueForKeyPath(keyPath) as! Float
+        return floatFor(keyPath) ?? 0.0
     }
     
     public func floatValueFor(keyPath: String, defaultValue: Float) -> Float {
@@ -230,7 +230,7 @@ extension JSONMapper {
     }
     
     public func arrayValueFor<T>(keyPath: String) -> [T] {
-        return rawJSONDictionary.valueForKeyPath(keyPath) as! [T]
+        return arrayFor(keyPath) ?? [T]()
     }
     
     public func arrayValueFor<T>(keyPath: String, defaultValue: [T]) -> [T] {
@@ -251,9 +251,7 @@ extension JSONMapper {
     }
     
     public func setValueFor<T>(keyPath: String) -> Set<T> {
-        let array: [T] = rawJSONDictionary.valueForKeyPath(keyPath) as! [T]
-        
-        return Set<T>(array)
+        return setFor(keyPath) ?? Set<T>()
     }
     
     public func setValueFor<T>(keyPath: String, defaultValue: Set<T>) -> Set<T> {
@@ -270,7 +268,7 @@ extension JSONMapper {
     }
     
     public func dictionaryValueFor(keyPath: String) -> JSONDict {
-        return rawJSONDictionary.valueForKeyPath(keyPath) as! JSONDict
+        return dictionaryFor(keyPath) ?? JSONDict()
     }
     
     public func dictionaryValueFor(keyPath: String, defaultValue: JSONDict) -> JSONDict {
@@ -320,12 +318,6 @@ extension JSONMapper {
         }
         
         return nil
-    }
-    
-    public func urlValueFrom(keyPath: String) -> NSURL {
-        let value = stringValueFor(keyPath)
-        
-        return NSURL(string: value)!
     }
     
     public func urlValueFrom(keyPath: String, defaultValue: NSURL) -> NSURL {
@@ -382,7 +374,7 @@ extension JSONMapper {
     }
     
     public func objectArrayValueFor<T: JSONMappable>(keyPath: String) -> [T] {
-        let arrayValues = rawJSONDictionary.valueForKeyPath(keyPath) as! JSONArray
+        let arrayValues = rawJSONDictionary.valueForKeyPath(keyPath) as? JSONArray ?? JSONArray()
         
         return _objectsArrayFrom(arrayValues)
     }
@@ -407,7 +399,7 @@ extension JSONMapper {
     public func objectSetValueFor<T: JSONMappable>(keyPath: String) -> Set<T> {
         let values: [T] = objectArrayValueFor(keyPath)
         
-        return Set<T>(values)
+        return objectSetFor(keyPath) ?? Set<T>()
     }
     
     public func objectSetValueFor<T: JSONMappable>(keyPath: String, defaultValue: Set<T>) -> Set<T> {

@@ -66,9 +66,19 @@ class JSONTests: XCTestCase {
         super.tearDown()
     }
     
-    func testOldPerformance() {
+    func testPerformance() {
         self.measureBlock() {
             let objects = JSONAdapter<TestObject>.objectsFromJSONArray(self.testDictArray)
+        }
+    }
+    
+    func testGetValuePerformance() {
+        let mappers = testDictArray.map { return JSONMapper(dictionary: $0)}
+        
+        self.measureBlock { () -> Void in
+            for mapper in mappers {
+                mapper.stringValueFor("string")
+            }
         }
     }
 }
