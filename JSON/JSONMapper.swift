@@ -427,3 +427,42 @@ extension JSONMapper {
         return defaultValue
     }
 }
+
+// MARK: Mapping
+
+extension JSONMapper {
+    
+    public func mapArrayFor<T, U>(keyPath: String, block: (value: T) -> U) -> [U]? {
+        if let array = rawJSONDictionary.valueForKeyPath(keyPath) as? [T] {
+            let values = array.map(block)
+            
+            return values
+        }
+        
+        return nil
+    }
+    
+    public func mapArrayValueFor<T, U>(keyPath: String, block: (value: T) -> U) -> [U] {
+        return mapArrayFor(keyPath, block: block) ?? [U]()
+    }
+    
+    public func flatMapArrayFor<T, U>(keyPath: String, block: (value: T) -> U?) -> [U]? {
+        if let array = rawJSONDictionary.valueForKeyPath(keyPath) as? [T] {
+            var newValues = [U]()
+            
+            for item in array {
+                if let value = block(value: item) {
+                    newValues.append(value)
+                }
+            }
+            
+            return newValues
+        }
+        
+        return nil
+    }
+    
+    public func flatMapArrayValueFor<T, U>(keyPath: String, block: (value: T) -> U?) -> [U] {
+        return flatMapArrayFor(keyPath, block: block) ?? [U]()
+    }
+}
