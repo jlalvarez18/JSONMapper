@@ -69,7 +69,7 @@ class JSONTests: XCTestCase {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
         
-        let asdf = testDictArray
+        _ = testDictArray
     }
     
     override func tearDown() {
@@ -79,7 +79,7 @@ class JSONTests: XCTestCase {
     
     func testPerformance() {
         self.measureBlock() {
-            let objects = JSONAdapter<TestObject>.objectsFromJSONArray(self.testDictArray)
+            _ = JSONAdapter<TestObject>.objectsFromJSONArray(self.testDictArray)
         }
     }
     

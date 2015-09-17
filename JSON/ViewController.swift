@@ -32,7 +32,7 @@ class ViewController: UIViewController {
         if let jsonURL = NSBundle.mainBundle().URLForResource("tweets", withExtension: "json") {
             let tweets = JSONAdapter<Tweet>.objectsFromJSONFile(jsonURL)
             
-            println(tweets)
+            print(tweets)
         }
     }
 }

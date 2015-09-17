@@ -55,7 +55,7 @@ public final class JSONAdapter <N: JSONMappable> {
     }
     
     public class func objectsFromJSONData(data: NSData) -> [N]? {
-        if let json: AnyObject = NSJSONSerialization.JSONObjectWithData(data, options: .allZeros, error: nil) {
+        if let json: AnyObject = try? NSJSONSerialization.JSONObjectWithData(data, options: []) {
             if let dict = json as? JSONDict {
                 return [objectFromJSONDictionary(dict)]
             }
@@ -397,8 +397,6 @@ extension JSONMapper {
     }
     
     public func objectSetValueFor<T: JSONMappable>(keyPath: String) -> Set<T> {
-        let values: [T] = objectArrayValueFor(keyPath)
-        
         return objectSetFor(keyPath) ?? Set<T>()
     }
     
