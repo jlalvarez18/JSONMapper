@@ -11,6 +11,11 @@ import XCTest
 
 class JSONTests: XCTestCase {
     
+    enum TestEnum: String {
+        case One = "one"
+        case Two = "two"
+    }
+    
     let testDict: JSONDict = [
         "string": "test_string",
         "int": 277,
@@ -19,7 +24,8 @@ class JSONTests: XCTestCase {
         "float": 0.98,
         "array": ["string1", "string2", "string3"],
         "set": ["string1", "string2", "string3"],
-        "dictionary": ["key": "value"]
+        "dictionary": ["key": "value"],
+        "enum": ["one", "two", "three"]
     ]
     
     lazy var testDictArray: JSONArray = {
@@ -41,6 +47,7 @@ class JSONTests: XCTestCase {
         let array: Array<String>
         let set: Set<String>
         let dictionary: JSONDict
+        let enums: [TestEnum]
         
         init(mapper: JSONMapper) {
             string = mapper.stringValueFor("string")
@@ -51,6 +58,10 @@ class JSONTests: XCTestCase {
             array = mapper.arrayValueFor("array")
             set = mapper.setValueFor("set")
             dictionary = mapper.dictionaryValueFor("dictionary")
+            
+            enums = mapper.flatMapArrayValueFor("enum", block: { (value) -> TestEnum? in
+                return TestEnum(rawValue: value)
+            })
         }
     }
     
@@ -58,7 +69,7 @@ class JSONTests: XCTestCase {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
         
-        let asdf = testDictArray
+        _ = testDictArray
     }
     
     override func tearDown() {
@@ -66,9 +77,21 @@ class JSONTests: XCTestCase {
         super.tearDown()
     }
     
-    func testOldPerformance() {
+    func testPerformance() {
         self.measureBlock() {
-            let objects = JSONAdapter<TestObject>.objectsFromJSONArray(self.testDictArray)
+            _ = JSONAdapter<TestObject>.objectsFromJSONArray(self.testDictArray)
+        }
+    }
+    
+    func testGetValuePerformance() {
+        let mappers = testDictArray.map { return JSONMapper(dictionary: $0)}
+        
+        self.measureBlock { () -> Void in
+            for mapper in mappers {
+                mapper.flatMapArrayValueFor("enum", block: { (value) -> TestEnum? in
+                    return TestEnum(rawValue: value)
+                })
+            }
         }
     }
 }

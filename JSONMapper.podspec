@@ -16,8 +16,8 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "JSONMapper"
-  s.version      = "0.0.3"
-  s.summary      = "JSON mapping help for Swift"
+  s.version      = "0.0.5"
+  s.summary      = "JSON mapping for Swift"
 
   s.description  = <<-DESC
                    A simple way of mapping JSON to model objects (classes or structs)
@@ -72,7 +72,7 @@ Pod::Spec.new do |s|
   #  Supports git, hg, bzr, svn and HTTP.
   #
 
-  s.source       = { :git => "https://github.com/jlalvarez18/JSONMapper.git", :tag => "0.0.3" }
+  s.source       = { :git => "https://github.com/jlalvarez18/JSONMapper.git", :tag => "0.0.5" }
 
 
   # ――― Source Code ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
