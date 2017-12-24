@@ -20,19 +20,23 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        let dateFormatter = NSDateFormatter()
-        dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX")
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
         dateFormatter.dateFormat = "EEE MMM dd HH:mm:ss Z yyyy"
         
-        JSONDateFormatter.registerDateFormatter(dateFormatter, withKey: "TweetDateFormatter")
+        JSONDateFormatter.registerDateFormatter(formatter: dateFormatter, withKey: "TweetDateFormatter")
         
-        if let jsonURL = NSBundle.mainBundle().URLForResource("tweets", withExtension: "json") {
-            let tweets = JSONAdapter<Tweet>.objectsFromJSONFile(jsonURL)
-            
-            print(tweets)
+        if let jsonURL = Bundle.main.url(forResource: "tweets", withExtension: "json") {
+            do {
+                let tweets = try JSONAdapter<Tweet>.objectsFromJSONFile(url: jsonURL)
+                
+                print(tweets)
+            } catch {
+                print(error)
+            }
         }
     }
 }
@@ -41,15 +45,15 @@ struct Tweet: JSONMappable {
     let user: User
     let text: String
     let screenName: String
-    let createdAt: NSDate?
+    let createdAt: Date?
     let favorited: Bool
 
     init(mapper: JSONMapper) {
-        user = mapper.objectFor("user")!
-        screenName = mapper.stringValueFor("user.screen_name")
-        text = mapper.stringValueFor("text")
-        createdAt = mapper.dateFromStringFor("created_at", withFormatterKey: "TweetDateFormatter")
-        favorited = mapper.boolValueFor("favorited")
+        user = mapper.objectFor(keyPath: "user")!
+        screenName = mapper.stringValueFor(keyPath: "user.screen_name")
+        text = mapper.stringValueFor(keyPath: "text")
+        createdAt = mapper.dateFromStringFor(keyPath: "created_at", withFormatterKey: "TweetDateFormatter")
+        favorited = mapper.boolValueFor(keyPath: "favorited")
     }
 }
 
@@ -57,39 +61,39 @@ struct User: JSONMappable {
     let name: String
     let idString: String
     let id: Int
-    let createdAt: NSDate?
-    let urls: [URL]
+    let createdAt: Date?
+    let urls: [URLItem]
     let defaultProfile: Bool
     let followersCount: Int
     let backgroundColor: UIColor?
     
     init(mapper: JSONMapper) {
-        name = mapper.stringValueFor("name")
-        idString = mapper.stringValueFor("id_str")
-        id = mapper.intValueFor("id")
-        urls = mapper.objectArrayValueFor("entities.description.urls", defaultValue: [])
-        defaultProfile = mapper.boolValueFor("default_profile")
-        followersCount = mapper.intValueFor("followers_count")
+        name = mapper.stringValueFor(keyPath: "name")
+        idString = mapper.stringValueFor(keyPath: "id_str")
+        id = mapper.intValueFor(keyPath: "id")
+        urls = mapper.objectArrayValueFor(keyPath: "entities.description.urls", defaultValue: [])
+        defaultProfile = mapper.boolValueFor(keyPath: "default_profile")
+        followersCount = mapper.intValueFor(keyPath: "followers_count")
         
-        backgroundColor = mapper.transform("profile_background_color", block: { (value) -> UIColor? in
-            return UIColor.fromHex(value)
+        backgroundColor = mapper.transform(keyPath: "profile_background_color", block: { (value) -> UIColor? in
+            return UIColor.fromHex(hex: value)
         })
         
-        createdAt = mapper.dateFromStringFor("created_at", withFormatterKey: "TweetDateFormatter")
+        createdAt = mapper.dateFromStringFor(keyPath: "created_at", withFormatterKey: "TweetDateFormatter")
     }
 }
 
-struct URL: JSONMappable {
-    let displayURL: NSURL
-    let expandedURL: NSURL
-    let url: NSURL
+struct URLItem: JSONMappable {
+    let displayURL: URL
+    let expandedURL: URL
+    let url: URL
     let indices: Set<Int>
     
     init(mapper: JSONMapper) {
-        displayURL = mapper.urlValueFrom("display_url", defaultValue: NSURL())
-        expandedURL = mapper.urlValueFrom("expanded_url", defaultValue: NSURL())
-        url = mapper.urlValueFrom("url", defaultValue: NSURL())
-        indices = mapper.setValueFor("indices")
+        displayURL = mapper.urlValueFrom(keyPath: "display_url")
+        expandedURL = mapper.urlValueFrom(keyPath: "expanded_url")
+        url = mapper.urlValueFrom(keyPath: "url")
+        indices = mapper.setValueFor(keyPath: "indices")
     }
 }
 
