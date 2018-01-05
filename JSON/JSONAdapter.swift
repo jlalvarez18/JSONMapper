@@ -8,70 +8,107 @@
 
 import Foundation
 
-public final class JSONAdapter<N: JSONMappable> {
+public final class JSONAdapter {
     
     public enum Error: Swift.Error {
         case invalidJSON
     }
     
-    private init() {}
+    struct Options {
+        let dateDecodingStrategy: DateDecodingStrategy
+        let dataDecodingStrategy: DataDecodingStrategy
+        let valueDecodingStrategy: ValueDecodingStrategy
+    }
     
-    public class func objectFromJSONDictionary(dict: JSONDict) -> N {
-        let mapper = JSONMapper(dictionary: dict)
-        let object = N(mapper: mapper)
+    /// The strategy to use for decoding `Date` values.
+    public enum DateDecodingStrategy {
+        /// Decode the `Date` as a UNIX timestamp from a JSON number.
+        case secondsSince1970
+        
+        /// Decode the `Date` as UNIX millisecond timestamp from a JSON number.
+        case millisecondsSince1970
+        
+        /// Decode the `Date` as an ISO-8601-formatted string (in RFC 3339 format). This is the default strategy.
+        case iso8601
+        
+        /// Decode the `Date` as a string parsed by the given formatter.
+        case formatted(DateFormatter)
+        
+        /// Decode the `Date` as a custom value decoded by the given closure.
+        case custom((Any) throws -> Date)
+    }
+    
+    /// The strategy to use for decoding `Data` values.
+    public enum DataDecodingStrategy {
+        /// Decode the `Data` from a Base64-encoded string. This is the default strategy.
+        case base64
+        
+        /// Decode the `Data` as a custom value decoded by the given closure.
+        case custom((Any) throws -> Data)
+    }
+    
+    public enum ValueDecodingStrategy {
+        /// If value is not present or value is not of the same type, default values will be used when calling decodeValue().
+        /// This only works for JSONType, JSONDict, JSONArray and Bool values.
+        /// This is the default strategy.
+        case useDefaultValues
+        
+        /// If value is not present or value is not of the same type, decodeValue() will throw an error
+        case `throw`
+    }
+    
+    /// The strategy to use in decoding dates. Defaults to `.iso8601`.
+    public var dateDecodingStrategy: JSONAdapter.DateDecodingStrategy = .iso8601
+    
+    /// The strategy to use in decoding binary data. Defaults to `.base64`.
+    public var dataDecodingStrategy: JSONAdapter.DataDecodingStrategy = .base64
+    
+    public var valueDecodingStrategy: JSONAdapter.ValueDecodingStrategy = .useDefaultValues
+    
+    fileprivate var options: Options {
+        return Options(dateDecodingStrategy: dateDecodingStrategy,
+                       dataDecodingStrategy: dataDecodingStrategy,
+                       valueDecodingStrategy: valueDecodingStrategy)
+    }
+    
+    public func decode<T: JSONMappable>(data: Data) throws -> T {
+        let json = try JSONSerialization.jsonObject(with: data, options: [])
+        
+        guard let dict = json as? JSONDict else {
+            throw Error.invalidJSON
+        }
+        
+        let mapper = JSONMapper(dictionary: dict, options: self.options)
+        
+        let object = try T(mapper: mapper)
         
         return object
     }
     
-    public class func objectsFromJSONArray(array: JSONArray) -> [N] {
-        let results = array.map({ (json: JSONDict) -> N in
-            return self.objectFromJSONDictionary(dict: json)
-        })
+    public func decode<T: JSONMappable>(data: Data) throws -> [T] {
+        let json = try JSONSerialization.jsonObject(with: data, options: [])
+        
+        guard let array = json as? JSONArray else {
+            throw Error.invalidJSON
+        }
+        
+        let results = try array.map { (dict) -> T in
+            let mapper = JSONMapper(dictionary: dict, options: self.options)
+            return try T(mapper: mapper)
+        }
         
         return results
     }
     
-    public class func objectsFromJSONFile(url: URL) throws -> [N] {
-        let data = try Data(contentsOf: url)
+    public func decode<T: JSONMappable>(fileUrl: URL) throws -> T {
+        let data = try Data(contentsOf: fileUrl)
         
-        return try objectsFromJSONData(data: data)
+        return try decode(data: data)
     }
     
-    public class func objectsFromJSONData(data: Data) throws -> [N] {
-        let json = try JSONSerialization.jsonObject(with: data, options: [])
+    public func decode<T: JSONMappable>(fileUrl: URL) throws -> [T] {
+        let data = try Data(contentsOf: fileUrl)
         
-        if let dict = json as? JSONDict {
-            return [objectFromJSONDictionary(dict: dict)]
-        }
-        
-        if let array = json as? JSONArray {
-            return objectsFromJSONArray(array: array)
-        }
-        
-        throw Error.invalidJSON
-    }
-    
-    public class func objectsFrom(array: [AnyObject]) -> [N]? {
-        if let array = array as? JSONArray {
-            return objectsFromJSONArray(array: array)
-        }
-        
-        return nil
-    }
-    
-    public class func objectsValueFrom(array: [AnyObject]) -> [N] {
-        if let array = objectsFrom(array: array) {
-            return array
-        }
-        
-        return []
-    }
-    
-    public class func objectFrom(object: AnyObject) -> N? {
-        if let dict = object as? JSONDict {
-            return objectFromJSONDictionary(dict: dict)
-        }
-        
-        return nil
+        return try decode(data: data)
     }
 }

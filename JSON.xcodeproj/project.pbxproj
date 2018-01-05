@@ -12,6 +12,7 @@
 		0D4FDFA01AC4AC350083ADFA /* UIColorExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D4FDF9F1AC4AC350083ADFA /* UIColorExt.swift */; };
 		0D51932F1FEF38C4005A80BB /* JSONAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D51932E1FEF38C4005A80BB /* JSONAdapter.swift */; };
 		0D7CDEBB1AD210A10069F678 /* StringExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D7CDEBA1AD210A10069F678 /* StringExt.swift */; };
+		0D817E481FFFEB580078C788 /* JSONAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D51932E1FEF38C4005A80BB /* JSONAdapter.swift */; };
 		0DA7A1151A8BBF5800749F82 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DA7A1141A8BBF5800749F82 /* AppDelegate.swift */; };
 		0DA7A1171A8BBF5800749F82 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DA7A1161A8BBF5800749F82 /* ViewController.swift */; };
 		0DA7A11A1A8BBF5800749F82 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0DA7A1181A8BBF5800749F82 /* Main.storyboard */; };
@@ -254,6 +255,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0D1550F11B73ABF300DD0C00 /* JSONMapper.swift in Sources */,
+				0D817E481FFFEB580078C788 /* JSONAdapter.swift in Sources */,
 				0DA7A12B1A8BBF5800749F82 /* JSONTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -393,7 +395,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 3L8LER3A32;
 				INFOPLIST_FILE = JSON/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.alvarezproductions.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -407,7 +409,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 3L8LER3A32;
 				INFOPLIST_FILE = JSON/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.alvarezproductions.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -428,10 +430,11 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = JSONTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.alvarezproductions.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/JSON.app/JSON";
 			};
 			name = Debug;
@@ -445,10 +448,11 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = JSONTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.alvarezproductions.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/JSON.app/JSON";
 			};
 			name = Release;

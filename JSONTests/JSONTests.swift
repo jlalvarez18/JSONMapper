@@ -44,22 +44,20 @@ class JSONTests: XCTestCase {
         let bool: Bool
         let double: Double
         let float: Float
-        let array: Array<String>
-        let set: Set<String>
+        let array: [String]
         let dictionary: JSONDict
         let enums: [TestEnum]
         
-        init(mapper: JSONMapper) {
-            string = mapper.stringValueFor("string")
-            int = mapper.intValueFor("int")
-            bool = mapper.boolValueFor("bool")
-            double = mapper.doubleValueFor("double")
-            float = mapper.floatValueFor("float")
-            array = mapper.arrayValueFor("array")
-            set = mapper.setValueFor("set")
-            dictionary = mapper.dictionaryValueFor("dictionary")
+        init(mapper: JSONMapper) throws {
+            string = try mapper.decodeValue(forKeyPath: "string")
+            int = try mapper.decodeValue(forKeyPath: "int")
+            bool = try mapper.decodeValue(forKeyPath: "bool")
+            double = try mapper.decodeValue(forKeyPath: "double")
+            float = try mapper.decodeValue(forKeyPath: "float")
+            array = try mapper.decodeValue(forKeyPath: "array")
+            dictionary = try mapper.decodeValue(forKeyPath: "dictionary")
             
-            enums = mapper.flatMapArrayValueFor("enum", block: { (value) -> TestEnum? in
+            enums = mapper.flatMapArrayValueFor(keyPath: "enum", block: { (value) -> TestEnum? in
                 return TestEnum(rawValue: value)
             })
         }
@@ -77,21 +75,21 @@ class JSONTests: XCTestCase {
         super.tearDown()
     }
     
-    func testPerformance() {
-        self.measureBlock() {
-            _ = JSONAdapter<TestObject>.objectsFromJSONArray(self.testDictArray)
-        }
-    }
-    
-    func testGetValuePerformance() {
-        let mappers = testDictArray.map { return JSONMapper(dictionary: $0)}
-        
-        self.measureBlock { () -> Void in
-            for mapper in mappers {
-                mapper.flatMapArrayValueFor("enum", block: { (value) -> TestEnum? in
-                    return TestEnum(rawValue: value)
-                })
-            }
-        }
-    }
+//    func testPerformance() {
+//        self.measure() {
+//            _ = try! JSONAdapter.objectsFromJSONArray(array: self.testDictArray)
+//        }
+//    }
+//    
+//    func testGetValuePerformance() {
+//        let mappers = testDictArray.map { return JSONMapper(dictionary: $0)}
+//        
+//        self.measure { () -> Void in
+//            for mapper in mappers {
+//                _ = mapper.flatMapArrayValueFor(keyPath: "enum", block: { (value) -> TestEnum? in
+//                    return TestEnum(rawValue: value)
+//                })
+//            }
+//        }
+//    }
 }
