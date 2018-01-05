@@ -156,6 +156,10 @@ public final class JSONMapper {
     public subscript(keyPath: String) -> Any? {
         return rawJSON.value(forKeyPath: keyPath)
     }
+    
+    public subscript(keyPaths: [String]) -> Any? {
+        return rawJSON.value(forKeyPaths: keyPaths)
+    }
 }
 
 // MARK: - JSON Types -
