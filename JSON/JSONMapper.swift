@@ -8,7 +8,7 @@
 
 import Foundation
 
-public typealias JSONDict = [String: Any] //NSDictionary
+public typealias JSONDict = [String: Any]
 public typealias JSONArray = [JSONDict]
 
 private let iso8601: ISO8601DateFormatter = {
@@ -23,6 +23,10 @@ extension Dictionary {
         let keys = keyPath.components(separatedBy: ".")
         
         return value(forKeyPaths: keys)
+    }
+    
+    public func value(forKeyPath keyPaths: String...) -> Any? {
+        return value(forKeyPaths: keyPaths)
     }
     
     public func value(forKeyPaths keys: [String]) -> Any? {
@@ -46,6 +50,47 @@ extension Dictionary {
         }
         
         return value
+    }
+    
+    mutating public func set(value: Any, forKeyPath keyPath: String) {
+        let keys = keyPath.components(separatedBy: ".")
+        
+        set(value: value, forKeyPaths: keys)
+    }
+    
+    mutating public func set(value: Any, forKeyPath keyPaths: String...) {
+        set(value: value, forKeyPaths: keyPaths)
+    }
+    
+    mutating public func set(value: Any, forKeyPaths _keys: [String]) {
+        var keys = _keys
+        
+        guard let first = keys.first as? Key else {
+            print("Unable to use string as key on type: \(Key.self)")
+            return
+        }
+        
+        keys.remove(at: 0)
+        
+        if keys.isEmpty, let val = value as? Value {
+            self[first] = val
+        } else {
+            let rejoined = keys.joined(separator: ".")
+            
+            var subDict: [AnyHashable: Any] = [:]
+            
+            if let sub = self[first] as? Dictionary {
+                subDict = sub
+            }
+            
+            subDict.set(value: value, forKeyPath: rejoined)
+            
+            if let val = subDict as? Value {
+                self[first] = val
+            } else {
+                print("Unable to set value: \(subDict) to dictionary of type: \(type(of: self))")
+            }
+        }
     }
 }
 
