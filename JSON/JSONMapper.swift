@@ -205,19 +205,15 @@ public final class JSONMapper {
     public subscript(keyPaths: [String]) -> Any? {
         return rawJSON.value(forKeyPaths: keyPaths)
     }
+    
+    public func contains(keyPath: String) -> Bool {
+        return self[keyPath] != nil
+    }
 }
 
 // MARK: - JSON Types -
 
 extension JSONMapper {
-    
-    public func decode<T: JSONType>(forKeyPath keyPath: String) -> T? {
-        guard let value = self[keyPath] else {
-            return nil
-        }
-        
-        return value as? T
-    }
     
     public func decodeValue<T: JSONType>(forKeyPath keyPath: String) throws -> T {
         guard let value = self[keyPath] else {
@@ -230,24 +226,7 @@ extension JSONMapper {
         }
         
         guard let newValue = value as? T else {
-            switch valueDecodingStrategy {
-            case .useDefaultValues:
-                return T.defaultValue()
-            case .throw:
-                throw Error.invalidType(String(describing: T.self))
-            }
-        }
-        
-        return newValue
-    }
-    
-    public func decode<T: JSONType>(forKeyPath keyPath: String) -> [T]? {
-        guard let value = self[keyPath] else {
-            return nil
-        }
-        
-        guard let newValue = value as? [T] else {
-            return nil
+            throw Error.invalidType(String(describing: T.self))
         }
         
         return newValue
@@ -264,15 +243,18 @@ extension JSONMapper {
         }
         
         guard let newValue = value as? [T] else {
-            switch valueDecodingStrategy {
-            case .useDefaultValues:
-                return []
-            case .throw:
-                throw Error.invalidType(String(describing: T.self))
-            }
+            throw Error.invalidType(String(describing: T.self))
         }
         
         return newValue
+    }
+    
+    public func decode<T: JSONType>(forKeyPath keyPath: String) -> T? {
+        return try? decodeValue(forKeyPath: keyPath)
+    }
+    
+    public func decode<T: JSONType>(forKeyPath keyPath: String) -> [T]? {
+        return try? self.decodeValue(forKeyPath: keyPath)
     }
 }
 
@@ -291,12 +273,7 @@ extension JSONMapper {
         }
         
         guard let dict = value as? JSONDict else {
-            switch valueDecodingStrategy {
-            case .useDefaultValues:
-                return JSONDict()
-            case .throw:
-                throw Error.invalidType(String(describing: JSONDict.self))
-            }
+            throw Error.invalidType(String(describing: JSONDict.self))
         }
         
         return dict
@@ -313,15 +290,18 @@ extension JSONMapper {
         }
         
         guard let array = value as? JSONArray else {
-            switch valueDecodingStrategy {
-            case .useDefaultValues:
-                return JSONArray()
-            case .throw:
-                throw Error.invalidType(String(describing: JSONArray.self))
-            }
+            throw Error.invalidType(String(describing: JSONArray.self))
         }
         
         return array
+    }
+    
+    public func decode(forKeyPath keyPath: String) -> JSONDict? {
+        return try? decodeValue(forKeyPath: keyPath)
+    }
+    
+    public func decode(forKeyPath keyPath: String) -> JSONArray? {
+        return try? decodeValue(forKeyPath: keyPath)
     }
 }
 
@@ -330,40 +310,39 @@ extension JSONMapper {
 extension JSONMapper {
     
     public func decodeValue<T: JSONMappable>(forKeyPath keyPath: String) throws -> T {
+        let mapDict: (JSONDict) throws -> T = {
+            let mapper = JSONMapper(dictionary: $0, options: self.options)
+            return try T(mapper: mapper)
+        }
+        
         guard let value = self[keyPath] else {
-            throw Error.keyPathMissing(keyPath)
+            switch valueDecodingStrategy {
+            case .useDefaultValues:
+                return try mapDict([:])
+            case .throw:
+                throw Error.keyPathMissing(keyPath)
+            }
         }
         
         guard let dict = value as? JSONDict else {
-            throw Error.invalidType("Invalid JSON Type")
+            throw Error.invalidType(String(describing: JSONDict.self))
         }
         
-        let mapper = JSONMapper(dictionary: dict, options: self.options)
-        
-        return try T(mapper: mapper)
-    }
-    
-    public func decode<T: JSONMappable>(forKeyPath keyPath: String) throws -> T? {
-        guard let value = self[keyPath] else {
-            return nil
-        }
-        
-        guard let dict = value as? JSONDict else {
-            return nil
-        }
-        
-        let mapper = JSONMapper(dictionary: dict, options: self.options)
-        
-        return try T(mapper: mapper)
+        return try mapDict(dict)
     }
     
     public func decodeValue<T: JSONMappable>(forKeyPath keyPath: String) throws -> [T] {
         guard let value = self[keyPath] else {
-            throw Error.keyPathMissing(keyPath)
+            switch valueDecodingStrategy {
+            case .useDefaultValues:
+                return []
+            case .throw:
+                throw Error.keyPathMissing(keyPath)
+            }
         }
         
         guard let array = value as? JSONArray else {
-            throw Error.invalidType("Invalid JSON Type")
+            throw Error.invalidType(String(describing: JSONArray.self))
         }
         
         let results = try array.map { (dict) -> T in
@@ -374,21 +353,12 @@ extension JSONMapper {
         return results
     }
     
+    public func decode<T: JSONMappable>(forKeyPath keyPath: String) throws -> T? {
+        return try? decodeValue(forKeyPath: keyPath)
+    }
+    
     public func decode<T: JSONMappable>(forKeyPath keyPath: String) throws -> [T]? {
-        guard let value = self[keyPath] else {
-            return nil
-        }
-        
-        guard let array = value as? JSONArray else {
-            return nil
-        }
-        
-        let results = try array.map { (dict) -> T in
-            let mapper = JSONMapper(dictionary: dict, options: self.options)
-            return try T(mapper: mapper)
-        }
-        
-        return results
+        return try? decodeValue(forKeyPath: keyPath)
     }
 }
 
@@ -397,26 +367,11 @@ extension JSONMapper {
 extension JSONMapper {
     
     public func decode(forKeyPath keyPath: String) -> Bool? {
-        if let value = rawJSON.value(forKeyPath: keyPath) as? Bool {
-            return value
-        }
-        
-        if let value = rawJSON.value(forKeyPath: keyPath) as? String {
-            switch value.lowercased() {
-            case "true", "yes", "1":
-                return true
-            case "false", "no", "0":
-                return false
-            default:
-                return nil
-            }
-        }
-        
-        return nil
+        return try? decodeValue(forKeyPath: keyPath)
     }
     
     public func decodeValue(forKeyPath keyPath: String) throws -> Bool {
-        guard rawJSON.value(forKeyPath: keyPath) != nil else {
+        guard let value = self[keyPath] else {
             switch valueDecodingStrategy {
             case .useDefaultValues:
                 return false
@@ -425,16 +380,30 @@ extension JSONMapper {
             }
         }
         
-        guard let value: Bool = decode(forKeyPath: keyPath) else {
-            switch valueDecodingStrategy {
-            case .useDefaultValues:
-                return false
-            case .throw:
-                throw Error.invalidType(String(describing: Bool.self))
+        let boolValue: Bool?
+        
+        if let _boolValue = value as? Bool {
+            boolValue = _boolValue
+        } else if let stringValue = value as? String {
+            switch stringValue.lowercased() {
+            case "true", "yes", "1":
+                boolValue = true
+                
+            case "false", "no", "0":
+                boolValue = false
+            
+            default:
+                boolValue = nil
             }
+        } else {
+            boolValue = nil
         }
         
-        return value
+        guard let finalValue = boolValue else {
+            throw Error.invalidType(String(describing: Bool.self))
+        }
+        
+        return finalValue
     }
 }
 
@@ -442,20 +411,10 @@ extension JSONMapper {
 
 extension JSONMapper {
     
-    public func decode(forKeyPath keyPath: String) -> Date? {
-        do {
-            return try decodeValue(forKeyPath: keyPath)
-        } catch {
-            return nil
-        }
-    }
-    
     public func decodeValue(forKeyPath keyPath: String) throws -> Date {
         switch self.dateDecodingStrategy {
         case .formatted(let formatter):
-            guard let value: String = self.decode(forKeyPath: keyPath) else {
-                throw Error.dataCorrupted(keyPath)
-            }
+            let value: String = try self.decodeValue(forKeyPath: keyPath)
             
             guard let date = formatter.date(from: value) else {
                 throw Error.dataCorrupted(keyPath)
@@ -463,23 +422,17 @@ extension JSONMapper {
             
             return date
         case .secondsSince1970:
-            guard let value: Double = self.decode(forKeyPath: keyPath) else {
-                throw Error.dataCorrupted(keyPath)
-            }
+            let value: Double = try self.decodeValue(forKeyPath: keyPath)
             
             return Date(timeIntervalSince1970: value)
             
         case .millisecondsSince1970:
-            guard let value: Double = self.decode(forKeyPath: keyPath) else {
-                throw Error.dataCorrupted(keyPath)
-            }
+            let value: Double = try self.decodeValue(forKeyPath: keyPath)
             
             return Date(timeIntervalSince1970: value/1000.0)
             
         case .iso8601:
-            guard let value: String = self.decode(forKeyPath: keyPath) else {
-                throw Error.dataCorrupted(keyPath)
-            }
+            let value: String = try self.decodeValue(forKeyPath: keyPath)
             
             guard let date = iso8601.date(from: value) else {
                 throw Error.dataCorrupted(keyPath)
@@ -495,26 +448,20 @@ extension JSONMapper {
             return try block(value)
         }
     }
+    
+    public func decode(forKeyPath keyPath: String) -> Date? {
+        return try? decodeValue(forKeyPath: keyPath)
+    }
 }
 
 // MARK: - Data -
 
 extension JSONMapper {
     
-    public func decode(forKeyPath keyPath: String) -> Data? {
-        do {
-            return try decodeValue(forKeyPath: keyPath)
-        } catch {
-            return nil
-        }
-    }
-    
     public func decodeValue(forKeyPath keyPath: String) throws -> Data {
         switch self.dataDecodingStrategy {
         case .base64:
-            guard let value: String = self.decode(forKeyPath: keyPath) else {
-                throw Error.dataCorrupted(keyPath)
-            }
+            let value: String = try self.decodeValue(forKeyPath: keyPath)
             
             guard let data = Data(base64Encoded: value) else {
                 throw Error.dataCorrupted(keyPath)
@@ -524,11 +471,15 @@ extension JSONMapper {
             
         case .custom(let block):
             guard let value = self[keyPath] else {
-                throw Error.dataCorrupted(keyPath)
+                throw Error.keyPathMissing(keyPath)
             }
             
             return try block(value)
         }
+    }
+    
+    public func decode(forKeyPath keyPath: String) -> Data? {
+        return try? decodeValue(forKeyPath: keyPath)
     }
 }
 
@@ -536,20 +487,18 @@ extension JSONMapper {
 
 extension JSONMapper {
     
-    public func decode(forKeyPath keyPath: String) -> URL? {
-        if let value: String = decode(forKeyPath: keyPath), !value.isEmpty {
-            return URL(string: value)
-        }
-        
-        return nil
-    }
-    
     public func decodeValue(forKeyPath keyPath: String) throws -> URL {
-        guard let url: URL = decode(forKeyPath: keyPath) else {
+        let urlString: String = try self.decodeValue(forKeyPath: keyPath)
+        
+        guard let url = URL(string: urlString) else {
             throw Error.dataCorrupted(keyPath)
         }
         
         return url
+    }
+    
+    public func decode(forKeyPath keyPath: String) -> URL? {
+        return try? decodeValue(forKeyPath: keyPath)
     }
 }
 
@@ -558,7 +507,7 @@ extension JSONMapper {
 extension JSONMapper {
     
     public func transform<T, U>(keyPath: String, block: (_ value: T) -> U?) -> U? {
-        if let aValue = rawJSON.value(forKeyPath: keyPath) as? T {
+        if let aValue = self[keyPath] as? T {
             return block(aValue)
         }
         
@@ -566,7 +515,7 @@ extension JSONMapper {
     }
     
     public func transformValue<T, U>(keyPath: String, defaultValue: U, block: (_ value: T) -> U) -> U {
-        if let aValue = rawJSON.value(forKeyPath: keyPath) as? T {
+        if let aValue = self[keyPath] as? T {
             return block(aValue)
         }
         
@@ -579,7 +528,7 @@ extension JSONMapper {
 extension JSONMapper {
     
     public func mapArrayFor<T, U>(keyPath: String, block: (_ value: T) -> U) -> [U]? {
-        if let array = rawJSON.value(forKeyPath: keyPath) as? [T] {
+        if let array = self[keyPath] as? [T] {
             let values = array.map(block)
             
             return values
@@ -593,7 +542,7 @@ extension JSONMapper {
     }
     
     public func flatMapArrayFor<T, U>(keyPath: String, block: (_ value: T) -> U?) -> [U]? {
-        if let array = rawJSON.value(forKeyPath: keyPath) as? [T] {
+        if let array = self[keyPath] as? [T] {
             var newValues = [U]()
             
             for item in array {

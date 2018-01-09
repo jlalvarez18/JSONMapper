@@ -48,7 +48,7 @@ public final class JSONAdapter {
     }
     
     public enum ValueDecodingStrategy {
-        /// If value is not present or value is not of the same type, default values will be used when calling decodeValue().
+        /// If value is not present, default values will be used when calling decodeValue().
         /// This only works for JSONType, JSONDict, JSONArray and Bool values.
         /// This is the default strategy.
         case useDefaultValues

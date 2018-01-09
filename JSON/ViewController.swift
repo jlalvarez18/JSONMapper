@@ -63,7 +63,7 @@ struct User: JSONMappable {
         name = try mapper.decodeValue(forKeyPath: "name")
         idString = try mapper.decodeValue(forKeyPath: "id_str")
         id = try mapper.decodeValue(forKeyPath: "id")
-        createdAt = try mapper.decodeValue(forKeyPath: "created_at")
+        createdAt = mapper.decode(forKeyPath: "created_at")
         urls = try mapper.decodeValue(forKeyPath: "entities.description.urls")
         defaultProfile = try mapper.decodeValue(forKeyPath: "default_profile")
         followersCount = try mapper.decodeValue(forKeyPath: "followers_count")
