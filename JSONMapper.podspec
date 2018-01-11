@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "JSONMapper"
-  s.version      = "0.0.5"
+  s.version      = "1.0.0"
   s.summary      = "JSON mapping for Swift"
 
   s.description  = <<-DESC
@@ -83,7 +83,7 @@ Pod::Spec.new do |s|
   #  Not including the public_header_files will make all headers public.
   #
 
-  s.source_files  = "JSON/JSONMapper.swift"
+  s.source_files  = "JSON/JSONMapper.swift", "JSON/JSONAdapter.swift"
   # s.source_files  = "Classes", "Classes/**/*.{h,m}"
   # s.exclude_files = "Classes/Exclude"
 
