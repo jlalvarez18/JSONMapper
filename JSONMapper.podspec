@@ -62,7 +62,7 @@ Pod::Spec.new do |s|
   # s.platform     = :ios, "8.0"
 
   #  When using multiple platforms
-  s.ios.deployment_target = "8.0"
+  s.ios.deployment_target = "11.0"
   s.osx.deployment_target = "10.10"
 
 
@@ -72,7 +72,7 @@ Pod::Spec.new do |s|
   #  Supports git, hg, bzr, svn and HTTP.
   #
 
-  s.source       = { :git => "https://github.com/jlalvarez18/JSONMapper.git", :tag => "0.0.5" }
+  s.source       = { :git => "https://github.com/jlalvarez18/JSONMapper.git", :tag => "1.0.0" }
 
 
   # ――― Source Code ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
