@@ -42,7 +42,7 @@ struct Tweet: JSONMappable {
 
     init(mapper: JSONMapper) throws {
         user = try mapper.decodeValue(forKeyPath: "user")
-        screenName = try mapper.decodeValue(forKeyPath: "user.screen_name")
+        screenName = try mapper.decodeValue(forKeyPath: "user", "screen_name")
         text = try mapper.decodeValue(forKeyPath: "text")
         createdAt = mapper.decode(forKeyPath: "created_at")
         favorited = try mapper.decodeValue(forKeyPath: "favorited")
@@ -64,11 +64,11 @@ struct User: JSONMappable {
         idString = try mapper.decodeValue(forKeyPath: "id_str")
         id = try mapper.decodeValue(forKeyPath: "id")
         createdAt = mapper.decode(forKeyPath: "created_at")
-        urls = try mapper.decodeValue(forKeyPath: "entities.description.urls")
+        urls = try mapper.decodeValue(forKeyPath: "entities", "description", "urls")
         defaultProfile = try mapper.decodeValue(forKeyPath: "default_profile")
         followersCount = try mapper.decodeValue(forKeyPath: "followers_count")
         
-        backgroundColor = mapper.transform(keyPath: "profile_background_color", block: { (value) -> UIColor? in
+        backgroundColor = try mapper.transform(keyPath: "profile_background_color", block: { (value) -> UIColor? in
             return UIColor.fromHex(hex: value)
         })
     }
@@ -87,4 +87,3 @@ struct URLItem: JSONMappable {
         indices = try mapper.decodeValue(forKeyPath: "indices")
     }
 }
-

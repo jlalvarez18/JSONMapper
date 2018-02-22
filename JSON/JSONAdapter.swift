@@ -11,7 +11,7 @@ import Foundation
 public final class JSONAdapter {
     
     public enum Error: Swift.Error {
-        case invalidJSON
+        case invalidJSONType(actual: Any.Type)
     }
     
     struct Options {
@@ -74,11 +74,7 @@ public final class JSONAdapter {
     public func decode<T: JSONMappable>(data: Data) throws -> T {
         let json = try JSONSerialization.jsonObject(with: data, options: [])
         
-        guard let dict = json as? JSONDict else {
-            throw Error.invalidJSON
-        }
-        
-        let mapper = JSONMapper(dictionary: dict, options: self.options)
+        let mapper = JSONMapper(value: json, options: self.options)
         
         let object = try T(mapper: mapper)
         
@@ -88,12 +84,12 @@ public final class JSONAdapter {
     public func decode<T: JSONMappable>(data: Data) throws -> [T] {
         let json = try JSONSerialization.jsonObject(with: data, options: [])
         
-        guard let array = json as? JSONArray else {
-            throw Error.invalidJSON
+        guard let array = json as? [Any] else {
+            throw Error.invalidJSONType(actual: type(of: json))
         }
         
-        let results = try array.map { (dict) -> T in
-            let mapper = JSONMapper(dictionary: dict, options: self.options)
+        let results = try array.map { (value) -> T in
+            let mapper = JSONMapper(value: value, options: self.options)
             return try T(mapper: mapper)
         }
         
