@@ -20,6 +20,8 @@
 		0DA7A11F1A8BBF5800749F82 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0DA7A11D1A8BBF5800749F82 /* LaunchScreen.xib */; };
 		0DA7A12B1A8BBF5800749F82 /* JSONTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DA7A12A1A8BBF5800749F82 /* JSONTests.swift */; };
 		0DA7A1351A8BBF6500749F82 /* JSONMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DA7A1341A8BBF6500749F82 /* JSONMapper.swift */; };
+		0DC904FF203E740500BA00AD /* JSONMappables.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DC904FE203E740500BA00AD /* JSONMappables.swift */; };
+		0DC90500203E76FD00BA00AD /* JSONMappables.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DC904FE203E740500BA00AD /* JSONMappables.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,6 +50,7 @@
 		0DA7A1291A8BBF5800749F82 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0DA7A12A1A8BBF5800749F82 /* JSONTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONTests.swift; sourceTree = "<group>"; };
 		0DA7A1341A8BBF6500749F82 /* JSONMapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONMapper.swift; sourceTree = "<group>"; };
+		0DC904FE203E740500BA00AD /* JSONMappables.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONMappables.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,6 +108,7 @@
 				0DA7A11D1A8BBF5800749F82 /* LaunchScreen.xib */,
 				0DA7A1341A8BBF6500749F82 /* JSONMapper.swift */,
 				0D51932E1FEF38C4005A80BB /* JSONAdapter.swift */,
+				0DC904FE203E740500BA00AD /* JSONMappables.swift */,
 				0D7CDEBC1AD210B50069F678 /* Extensions */,
 				0DA7A1121A8BBF5800749F82 /* Supporting Files */,
 			);
@@ -242,6 +246,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0DA7A1351A8BBF6500749F82 /* JSONMapper.swift in Sources */,
+				0DC904FF203E740500BA00AD /* JSONMappables.swift in Sources */,
 				0D51932F1FEF38C4005A80BB /* JSONAdapter.swift in Sources */,
 				0DA7A1171A8BBF5800749F82 /* ViewController.swift in Sources */,
 				0DA7A1151A8BBF5800749F82 /* AppDelegate.swift in Sources */,
@@ -255,6 +260,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0D1550F11B73ABF300DD0C00 /* JSONMapper.swift in Sources */,
+				0DC90500203E76FD00BA00AD /* JSONMappables.swift in Sources */,
 				0D817E481FFFEB580078C788 /* JSONAdapter.swift in Sources */,
 				0DA7A12B1A8BBF5800749F82 /* JSONTests.swift in Sources */,
 			);

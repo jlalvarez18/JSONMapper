@@ -74,7 +74,7 @@ public final class JSONAdapter {
     public func decode<T: JSONMappable>(data: Data) throws -> T {
         let json = try JSONSerialization.jsonObject(with: data, options: [])
         
-        let mapper = JSONMapper(value: json, options: self.options)
+        let mapper = JSONMapper(value: json, keyPath: nil, options: self.options)
         
         let object = try T(mapper: mapper)
         
@@ -89,7 +89,7 @@ public final class JSONAdapter {
         }
         
         let results = try array.map { (value) -> T in
-            let mapper = JSONMapper(value: value, options: self.options)
+            let mapper = JSONMapper(value: value, keyPath: nil, options: self.options)
             return try T(mapper: mapper)
         }
         

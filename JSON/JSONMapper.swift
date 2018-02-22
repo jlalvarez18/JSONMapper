@@ -11,12 +11,6 @@ import Foundation
 public typealias JSONDict = [String: Any]
 public typealias JSONArray = [JSONDict]
 
-private let iso8601: ISO8601DateFormatter = {
-    let formatter = ISO8601DateFormatter()
-    formatter.formatOptions = .withInternetDateTime
-    return formatter
-}()
-
 extension Dictionary {
     
     public func value(forKeyPath keyPath: String) -> Any? {
@@ -181,12 +175,19 @@ extension String: RawRepresentable {
     }
 }
 
+extension Array where Element == String {
+    
+    func keyPath() -> String {
+        return self.map { $0 }.joined(separator: ".")
+    }
+}
+
 public final class JSONMapper {
     
     public enum Error: Swift.Error {
         case invalidType(expected: Any.Type, actual: Any.Type)
-        case keyPathMissing(String)
-        case dataCorrupted(String)
+        case keyPathMissing(String?)
+        case dataCorrupted(String?)
     }
     
     let options: JSONAdapter.Options
@@ -204,10 +205,18 @@ public final class JSONMapper {
     }
     
     public let rawValue: Any?
+    public let keyPath: String?
     
-    init(value: Any?, options: JSONAdapter.Options) {
+    init(value: Any?, keyPath: String?, options: JSONAdapter.Options) {
         self.rawValue = value
+        self.keyPath = keyPath
         self.options = options
+    }
+    
+    convenience init<K: RawRepresentable>(value: Any?, keyPath: [K], options: JSONAdapter.Options) where K.RawValue == String {
+        let keys: String? = keyPath.isEmpty ? nil : keyPath.map { $0.rawValue }.keyPath()
+        
+        self.init(value: value, keyPath: keys, options: options)
     }
     
     public func value<K: RawRepresentable>(for keyPath: K) throws -> Any? where K.RawValue == String {
@@ -408,7 +417,7 @@ extension JSONMapper {
     
     public func decodeValue<T: JSONMappable, K: RawRepresentable>(forKeyPath keyPath: [K]) throws -> T where K.RawValue == String {
         let mapValue: (Any?) throws -> T = {
-            let mapper = JSONMapper(value: $0, options: self.options)
+            let mapper = JSONMapper(value: $0, keyPath: keyPath, options: self.options)
             return try T(mapper: mapper)
         }
         
@@ -443,7 +452,7 @@ extension JSONMapper {
         }
         
         let results = try array.map { (value) -> T in
-            let mapper = JSONMapper(value: value, options: self.options)
+            let mapper = JSONMapper(value: value, keyPath: keyPath, options: self.options)
             return try T(mapper: mapper)
         }
         
@@ -459,162 +468,6 @@ extension JSONMapper {
     }
     
     public func decode<T: JSONMappable, K: RawRepresentable>(forKeyPath keyPath: K...) -> [T]? where K.RawValue == String {
-        return try? decodeValue(forKeyPath: keyPath)
-    }
-}
-
-// MARK: - Bool -
-
-extension JSONMapper {
-    
-    public func decodeValue<K: RawRepresentable>(forKeyPath keyPath: [K]) throws -> Bool where K.RawValue == String {
-        guard let value = try self.value(for: keyPath) else {
-            switch valueDecodingStrategy {
-            case .useDefaultValues:
-                return false
-            case .throw:
-                throw self.throwKeyPathMissingError(keyPath)
-            }
-        }
-        
-        let boolValue: Bool?
-        
-        if let _boolValue = value as? Bool {
-            boolValue = _boolValue
-        } else if let stringValue = value as? String {
-            switch stringValue.lowercased() {
-            case "true", "yes", "1":
-                boolValue = true
-                
-            case "false", "no", "0":
-                boolValue = false
-                
-            default:
-                boolValue = nil
-            }
-        } else {
-            boolValue = nil
-        }
-        
-        guard let finalValue = boolValue else {
-            throw Error.invalidType(expected: Bool.self, actual: type(of: value))
-        }
-        
-        return finalValue
-    }
-    
-    public func decodeValue<K: RawRepresentable>(forKeyPath keyPath: K...) throws -> Bool where K.RawValue == String {
-        return try decodeValue(forKeyPath: keyPath)
-    }
-    
-    public func decode<K: RawRepresentable>(forKeyPath keyPath: K...) -> Bool? where K.RawValue == String {
-        return try? decodeValue(forKeyPath: keyPath)
-    }
-}
-
-// MARK: - Date -
-
-extension JSONMapper {
-
-    public func decodeValue<K: RawRepresentable>(forKeyPath keyPath: [K]) throws -> Date where K.RawValue == String {
-        switch self.dateDecodingStrategy {
-        case .formatted(let formatter):
-            let value: String = try self.decodeValue(forKeyPath: keyPath)
-            
-            guard let date = formatter.date(from: value) else {
-                throw self.throwDataCorruptedError(keyPath)
-            }
-            
-            return date
-        case .secondsSince1970:
-            let value: Double = try self.decodeValue(forKeyPath: keyPath)
-            
-            return Date(timeIntervalSince1970: value)
-            
-        case .millisecondsSince1970:
-            let value: Double = try self.decodeValue(forKeyPath: keyPath)
-            
-            return Date(timeIntervalSince1970: value/1000.0)
-            
-        case .iso8601:
-            let value: String = try self.decodeValue(forKeyPath: keyPath)
-            
-            guard let date = iso8601.date(from: value) else {
-                throw self.throwDataCorruptedError(keyPath)
-            }
-            
-            return date
-            
-        case .custom(let block):
-            guard let value = try self.value(for: keyPath) else {
-                throw self.throwDataCorruptedError(keyPath)
-            }
-            
-            return try block(value)
-        }
-    }
-    
-    public func decodeValue<K: RawRepresentable>(forKeyPath keyPath: K...) throws -> Date where K.RawValue == String {
-        return try decodeValue(forKeyPath: keyPath)
-    }
-    
-    public func decode<K: RawRepresentable>(forKeyPath keyPath: K...) -> Date? where K.RawValue == String {
-        return try? decodeValue(forKeyPath: keyPath)
-    }
-}
-
-// MARK: - Data -
-
-extension JSONMapper {
-    
-    public func decodeValue<K: RawRepresentable>(forKeyPath keyPath: [K]) throws -> Data where K.RawValue == String {
-        switch self.dataDecodingStrategy {
-        case .base64:
-            let value: String = try self.decodeValue(forKeyPath: keyPath)
-            
-            guard let data = Data(base64Encoded: value) else {
-                throw self.throwDataCorruptedError(keyPath)
-            }
-            
-            return data
-            
-        case .custom(let block):
-            guard let value = try self.value(for: keyPath) else {
-                throw self.throwKeyPathMissingError(keyPath)
-            }
-            
-            return try block(value)
-        }
-    }
-    
-    public func decodeValue<K: RawRepresentable>(forKeyPath keyPath: K...) throws -> Data where K.RawValue == String {
-        return try decodeValue(forKeyPath: keyPath)
-    }
-    
-    public func decode<K: RawRepresentable>(forKeyPath keyPath: K...) -> Data? where K.RawValue == String {
-        return try? decodeValue(forKeyPath: keyPath)
-    }
-}
-
-// MARK: - URL -
-
-extension JSONMapper {
-    
-    public func decodeValue<K: RawRepresentable>(forKeyPath keyPath: [K]) throws -> URL where K.RawValue == String {
-        let urlString: String = try self.decodeValue(forKeyPath: keyPath)
-        
-        guard let url = URL(string: urlString) else {
-            throw self.throwDataCorruptedError(keyPath)
-        }
-        
-        return url
-    }
-    
-    public func decodeValue<K: RawRepresentable>(forKeyPath keyPath: K...) throws -> URL where K.RawValue == String {
-        return try decodeValue(forKeyPath: keyPath)
-    }
-    
-    public func decode<K: RawRepresentable>(forKeyPath keyPath: K...) -> URL? where K.RawValue == String {
         return try? decodeValue(forKeyPath: keyPath)
     }
 }
