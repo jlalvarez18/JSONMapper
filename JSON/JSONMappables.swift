@@ -8,9 +8,27 @@
 
 import Foundation
 
+// MARK: - RawRepresentable -
+
+extension RawRepresentable {
+    
+    init(mapper: JSONMapper) throws {
+        guard let value = mapper.rawValue as? RawValue else {
+            throw JSONMapper.Error.keyPathMissing(mapper.keyPath)
+        }
+        
+        guard let rep = Self(rawValue: value) else {
+            throw JSONMapper.Error.keyPathMissing(mapper.keyPath)
+        }
+        
+        self = rep
+    }
+}
+
 // MARK: - Data -
 
 extension Data: JSONMappable {
+    
     public init(mapper: JSONMapper) throws {
         switch mapper.dataDecodingStrategy {
         case .base64:

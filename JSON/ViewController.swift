@@ -40,13 +40,31 @@ struct Tweet: JSONMappable {
     let screenName: String
     let createdAt: Date?
     let favorited: Bool
+    
+    let userScreenName: UserScreenName?
+    
+    enum UserScreenName: String, JSONMappable {
+        case healthRanger = "HealthRanger"
+        case dhh = "dhh"
+        case randPaul = "SenRandPaul"
+        case armstrong = "StrongEconomics"
+    }
+    
+    enum Keys: String, JSONKey {
+        case user
+        case screenName = "user.screen_name"
+        case text
+        case createdAt = "created_at"
+        case favorited = "favorited"
+    }
 
     init(mapper: JSONMapper) throws {
-        user = try mapper.decodeValue(forKeyPath: "user")
-        screenName = try mapper.decodeValue(forKeyPath: "user", "screen_name")
-        text = try mapper.decodeValue(forKeyPath: "text")
-        createdAt = mapper.decode(forKeyPath: "created_at")
-        favorited = try mapper.decodeValue(forKeyPath: "favorited")
+        userScreenName = mapper.decode(forKeyPath: Keys.screenName)
+        user = try mapper.decodeValue(forKeyPath: Keys.user)
+        screenName = try mapper.decodeValue(forKeyPath: Keys.screenName)
+        text = try mapper.decodeValue(forKeyPath: Keys.text)
+        createdAt = mapper.decode(forKeyPath: Keys.createdAt)
+        favorited = try mapper.decodeValue(forKeyPath: Keys.favorited)
     }
 }
 
