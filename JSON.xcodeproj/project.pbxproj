@@ -8,11 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		0D032F8C1A8CFE79002E8C2D /* tweets.json in Resources */ = {isa = PBXBuildFile; fileRef = 0D032F8B1A8CFE79002E8C2D /* tweets.json */; };
-		0D1550F11B73ABF300DD0C00 /* JSONMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DA7A1341A8BBF6500749F82 /* JSONMapper.swift */; };
 		0D4FDFA01AC4AC350083ADFA /* UIColorExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D4FDF9F1AC4AC350083ADFA /* UIColorExt.swift */; };
 		0D51932F1FEF38C4005A80BB /* JSONAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D51932E1FEF38C4005A80BB /* JSONAdapter.swift */; };
 		0D7CDEBB1AD210A10069F678 /* StringExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D7CDEBA1AD210A10069F678 /* StringExt.swift */; };
-		0D817E481FFFEB580078C788 /* JSONAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D51932E1FEF38C4005A80BB /* JSONAdapter.swift */; };
+		0D9BEB5520433D010033AF26 /* tweets.json in Resources */ = {isa = PBXBuildFile; fileRef = 0D032F8B1A8CFE79002E8C2D /* tweets.json */; };
+		0D9BEB5720433D300033AF26 /* TwitterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D9BEB5620433D300033AF26 /* TwitterTests.swift */; };
 		0DA7A1151A8BBF5800749F82 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DA7A1141A8BBF5800749F82 /* AppDelegate.swift */; };
 		0DA7A1171A8BBF5800749F82 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DA7A1161A8BBF5800749F82 /* ViewController.swift */; };
 		0DA7A11A1A8BBF5800749F82 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0DA7A1181A8BBF5800749F82 /* Main.storyboard */; };
@@ -22,7 +22,6 @@
 		0DA7A1351A8BBF6500749F82 /* JSONMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DA7A1341A8BBF6500749F82 /* JSONMapper.swift */; };
 		0DAAA5C8204085FC0080E0AC /* PrivateUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DAAA5C7204085FC0080E0AC /* PrivateUtilities.swift */; };
 		0DC904FF203E740500BA00AD /* JSONMappables.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DC904FE203E740500BA00AD /* JSONMappables.swift */; };
-		0DC90500203E76FD00BA00AD /* JSONMappables.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DC904FE203E740500BA00AD /* JSONMappables.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +39,7 @@
 		0D4FDF9F1AC4AC350083ADFA /* UIColorExt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIColorExt.swift; sourceTree = "<group>"; };
 		0D51932E1FEF38C4005A80BB /* JSONAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONAdapter.swift; sourceTree = "<group>"; };
 		0D7CDEBA1AD210A10069F678 /* StringExt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExt.swift; sourceTree = "<group>"; };
+		0D9BEB5620433D300033AF26 /* TwitterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwitterTests.swift; sourceTree = "<group>"; };
 		0DA7A10F1A8BBF5800749F82 /* JSON.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JSON.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0DA7A1131A8BBF5800749F82 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0DA7A1141A8BBF5800749F82 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -130,6 +130,7 @@
 		0DA7A1271A8BBF5800749F82 /* JSONTests */ = {
 			isa = PBXGroup;
 			children = (
+				0D9BEB5620433D300033AF26 /* TwitterTests.swift */,
 				0DA7A12A1A8BBF5800749F82 /* JSONTests.swift */,
 				0DA7A1281A8BBF5800749F82 /* Supporting Files */,
 			);
@@ -238,6 +239,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0D9BEB5520433D010033AF26 /* tweets.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -263,10 +265,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0D1550F11B73ABF300DD0C00 /* JSONMapper.swift in Sources */,
-				0DC90500203E76FD00BA00AD /* JSONMappables.swift in Sources */,
-				0D817E481FFFEB580078C788 /* JSONAdapter.swift in Sources */,
 				0DA7A12B1A8BBF5800749F82 /* JSONTests.swift in Sources */,
+				0D9BEB5720433D300033AF26 /* TwitterTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

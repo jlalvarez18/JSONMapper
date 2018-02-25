@@ -19,6 +19,7 @@ public final class JSONAdapter {
         let dateDecodingStrategy: DateDecodingStrategy
         let dataDecodingStrategy: DataDecodingStrategy
         let valueDecodingStrategy: ValueDecodingStrategy
+        let keyDecodingStrategy: KeyDecodingStrategy
     }
     
     /// The strategy to use for decoding `Date` values.
@@ -58,6 +59,43 @@ public final class JSONAdapter {
         case `throw`
     }
     
+    public enum KeyDecodingStrategy {
+        /// Use the keys specified by each type. This is the default strategy.
+        case useDefaultKeys
+        
+        /// Convert from "camelCaseKeys" to "snake_case_keys"
+        ///
+        /// Converting from camel case to snake case:
+        /// 1. Splits words at the boundary of lower-case to upper-case
+        /// 2. Inserts `_` between words
+        /// 3. Lowercases the entire string
+        /// 4. Preserves starting and ending `_`.
+        ///
+        /// For example, `oneTwoThree` becomes `one_two_three`. `_oneTwoThree_` becomes `_one_two_three_`.
+        ///
+        /// - Note: Using a key encoding strategy has a nominal performance cost, as each string key has to be converted.
+        case convertToSnakeCase
+        
+        func convert(_ key: String) -> String {
+            switch self {
+            case .useDefaultKeys:
+                return key
+                
+            case .convertToSnakeCase:
+                guard key.count > 0 else {
+                    return key
+                }
+                
+                let pattern = "([a-z0-9])([A-Z])"
+                
+                let regex = try! NSRegularExpression(pattern: pattern, options: [])
+                let range = NSRange(location: 0, length: key.count)
+                
+                return regex.stringByReplacingMatches(in: key, options: [], range: range, withTemplate: "$1_$2").lowercased()
+            }
+        }
+    }
+    
     /// The strategy to use in decoding dates. Defaults to `.iso8601`.
     public var dateDecodingStrategy: JSONAdapter.DateDecodingStrategy = .iso8601
     
@@ -66,10 +104,13 @@ public final class JSONAdapter {
     
     public var valueDecodingStrategy: JSONAdapter.ValueDecodingStrategy = .useDefaultValues
     
+    public var keyDecodingStrategy: JSONAdapter.KeyDecodingStrategy = .useDefaultKeys
+    
     fileprivate var options: Options {
         return Options(dateDecodingStrategy: dateDecodingStrategy,
                        dataDecodingStrategy: dataDecodingStrategy,
-                       valueDecodingStrategy: valueDecodingStrategy)
+                       valueDecodingStrategy: valueDecodingStrategy,
+                       keyDecodingStrategy: keyDecodingStrategy)
     }
     
     public func decode<T: JSONMappable>(data: Data) throws -> T {
