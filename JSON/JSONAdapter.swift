@@ -12,6 +12,7 @@ public final class JSONAdapter {
     
     public enum Error: Swift.Error {
         case invalidJSONType(actual: Any.Type)
+        case invalidInput
     }
     
     struct Options {
@@ -74,7 +75,7 @@ public final class JSONAdapter {
     public func decode<T: JSONMappable>(data: Data) throws -> T {
         let json = try JSONSerialization.jsonObject(with: data, options: [])
         
-        let mapper = JSONMapper(value: json, keyPath: nil, options: self.options)
+        let mapper = JSONMapper(value: json, keyPath: [], options: self.options)
         
         let object = try T(mapper: mapper)
         
@@ -89,11 +90,19 @@ public final class JSONAdapter {
         }
         
         let results = try array.map { (value) -> T in
-            let mapper = JSONMapper(value: value, keyPath: nil, options: self.options)
+            let mapper = JSONMapper(value: value, keyPath: [], options: self.options)
             return try T(mapper: mapper)
         }
         
         return results
+    }
+    
+    public func decode<T: JSONMappable>(jsonString: String) throws -> T {
+        guard let data = jsonString.data(using: .utf8) else {
+            throw Error.invalidInput
+        }
+        
+        return try decode(data: data)
     }
     
     public func decode<T: JSONMappable>(fileUrl: URL) throws -> T {
