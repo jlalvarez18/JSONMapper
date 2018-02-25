@@ -20,7 +20,7 @@ extension RawRepresentable {
         }
         
         guard let rep = Self(rawValue: newValue) else {
-            throw JSONMapper.Error.dataCorrupted(key: mapper.keyPath, debugDescription: "Unable to initialize \(Self.self) with value: \(newValue)")
+            throw JSONMapper.Error.dataCorrupted(key: mapper.keyPath, actual: newValue, debugDescription: "Unable to initialize \(Self.self) with value: \(newValue)")
         }
         
         self = rep
@@ -37,7 +37,7 @@ extension Data: JSONMappable {
             let value: String = try mapper.decodeValue()
             
             guard let data = Data(base64Encoded: value) else {
-                throw JSONMapper.Error.dataCorrupted(key: mapper.keyPath, debugDescription: "Encountered Data is not valid Base64.")
+                throw JSONMapper.Error.dataCorrupted(key: mapper.keyPath, actual: value, debugDescription: "Encountered Data is not valid Base64.")
             }
             
             self = data
@@ -58,7 +58,7 @@ extension URL: JSONMappable {
         let urlString: String = try mapper.decodeValue()
         
         guard let url = URL(string: urlString) else {
-            throw JSONMapper.Error.dataCorrupted(key: mapper.keyPath, debugDescription: "Invalid URL string.")
+            throw JSONMapper.Error.dataCorrupted(key: mapper.keyPath, actual: urlString, debugDescription: "Invalid URL string.")
         }
         
         self = url
@@ -115,7 +115,7 @@ extension Date: JSONMappable {
             let value: String = try mapper.decodeValue()
             
             guard let date = formatter.date(from: value) else {
-                throw JSONMapper.Error.dataCorrupted(key: mapper.keyPath, debugDescription: "Date string does not match format expected by formatter.")
+                throw JSONMapper.Error.dataCorrupted(key: mapper.keyPath, actual: value, debugDescription: "Date string does not match format expected by formatter.")
             }
             
             self = date
@@ -133,7 +133,7 @@ extension Date: JSONMappable {
             let value: String = try mapper.decodeValue()
             
             guard let date = _iso8601Formatter.date(from: value) else {
-                throw JSONMapper.Error.dataCorrupted(key: mapper.keyPath, debugDescription: "Expected date string to be ISO8601-formatted.")
+                throw JSONMapper.Error.dataCorrupted(key: mapper.keyPath, actual: value, debugDescription: "Expected date string to be ISO8601-formatted.")
             }
             
             self = date

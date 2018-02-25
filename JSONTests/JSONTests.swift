@@ -6,8 +6,8 @@
 //  Copyright (c) 2015 Alvarez Productions. All rights reserved.
 //
 
-import UIKit
 import XCTest
+@testable import JSON
 
 class JSONTests: XCTestCase {
     

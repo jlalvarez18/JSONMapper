@@ -77,9 +77,26 @@ extension Dictionary {
 }
 
 public protocol JSONMappable {
-    // This should throw if there are any invalid keys, value, etc
     init(mapper: JSONMapper) throws
 }
+
+// TODO: This will only work on Swift 4.1 which will help remove the array versions of decode()
+//extension Array: JSONMappable where Element: JSONMappable {
+//
+//    public init(mapper: JSONMapper) throws {
+//        self.init()
+//
+//        let values: [Any] = try mapper.decodeValue()
+//
+//        for value in values {
+//            let itemMapper = JSONMapper(value: value, keyPath: [], options: mapper.options)
+//
+//            let item: Element = try itemMapper.decodeValue()
+//
+//            self.append(item)
+//        }
+//    }
+//}
 
 public protocol JSONKey {
     func stringValue() -> String
@@ -179,7 +196,7 @@ public final class JSONMapper {
     public enum Error: Swift.Error {
         case invalidType(key: [JSONKey], expected: Any.Type, actual: Any.Type, debugDescription: String)
         case keyPathMissing(key: [JSONKey], debugDescription: String)
-        case dataCorrupted(key: [JSONKey], debugDescription: String)
+        case dataCorrupted(key: [JSONKey], actual: Any?, debugDescription: String)
     }
     
     let options: JSONAdapter.Options
@@ -196,6 +213,10 @@ public final class JSONMapper {
         return options.valueDecodingStrategy
     }
     
+    var keyDecodingStrategy: JSONAdapter.KeyDecodingStrategy {
+        return options.keyDecodingStrategy
+    }
+    
     public let rawValue: Any?
     public let keyPath: [JSONKey]
     
@@ -208,7 +229,7 @@ public final class JSONMapper {
     public func value(for keyPath: [JSONKey]) throws -> Any? {
         let dict: JSONDict = try self.decodeValue()
         
-       return dict.value(forKeyPath: keyPath.map { $0.stringValue() })
+       return dict.value(forKeyPath: keyPath.map { self.keyDecodingStrategy.convert($0.stringValue()) })
     }
     
     public func value(for keyPath: JSONKey...) throws -> Any? {
@@ -317,6 +338,31 @@ extension JSONMapper {
     
     public func decode() -> Any? {
         return try? self.decodeValue()
+    }
+}
+
+// MARK: - Swift Decodable -
+
+extension JSONMapper {
+    
+    public func decodeValue<T: Decodable>(forKeyPath keyPath: [JSONKey], decoder: JSONDecoder) throws -> T {
+        let value: JSONDict = try self.decodeValue(forKeyPath: keyPath)
+        
+        let data = try JSONSerialization.data(withJSONObject: value, options: [])
+        
+        return try decoder.decode(T.self, from: data)
+    }
+    
+    public func decodeValue<T: Decodable>(forKeyPath keyPath: [JSONKey], decoder: JSONDecoder) throws -> [T] {
+        let value: JSONArray = try self.decodeValue(forKeyPath: keyPath)
+        
+        let data = try JSONSerialization.data(withJSONObject: value, options: [])
+        
+        return try decoder.decode([T].self, from: data)
+    }
+    
+    public func decode<T: Decodable>(forKeyPath keyPath: [JSONKey], decoder: JSONDecoder) -> T? {
+        return try? decodeValue(forKeyPath: keyPath, decoder: decoder)
     }
 }
 
