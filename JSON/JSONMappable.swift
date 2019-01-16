@@ -1,5 +1,5 @@
 //
-//  JSONMappables.swift
+//  JSONMappable.swift
 //  JSON
 //
 //  Created by Juan Alvarez on 2/21/18.
@@ -7,6 +7,29 @@
 //
 
 import Foundation
+
+public protocol JSONMappable {
+    init(mapper: JSONMapper) throws
+}
+
+// MARK: - Array of JSONMappables -
+
+extension Array: JSONMappable where Element: JSONMappable {
+    
+    public init(mapper: JSONMapper) throws {
+        self.init()
+        
+        let values: [Any] = try mapper.decodeValue()
+        
+        for value in values {
+            let itemMapper = JSONMapper(value: value, keyPath: [], options: mapper.options)
+            
+            let item: Element = try itemMapper.decodeValue()
+            
+            self.append(item)
+        }
+    }
+}
 
 // MARK: - RawRepresentable -
 
@@ -58,7 +81,7 @@ extension URL: JSONMappable {
         let urlString: String = try mapper.decodeValue()
         
         guard let url = URL(string: urlString) else {
-            throw JSONMapper.Error.dataCorrupted(key: mapper.keyPath, actual: urlString, debugDescription: "Invalid URL string.")
+            throw mapper.dataCorrupted(mapper.keyPath, actual: urlString, debugDescription: "Invalid URL string.")
         }
         
         self = url
@@ -74,8 +97,8 @@ extension Bool: JSONMappable {
         
         let boolValue: Bool?
         
-        if let _boolValue = value as? Bool {
-            boolValue = _boolValue
+        if let _value = value as? Bool {
+            boolValue = _value
         } else if let stringValue = value as? String {
             switch stringValue.lowercased() {
             case "true", "yes", "1":
@@ -85,6 +108,14 @@ extension Bool: JSONMappable {
                 boolValue = false
                 
             default:
+                boolValue = nil
+            }
+        } else if let number = value as? NSNumber {
+            if (number == kCFBooleanTrue) {
+                boolValue = true
+            } else if (number == kCFBooleanFalse) {
+                boolValue = false
+            } else {
                 boolValue = nil
             }
         } else {

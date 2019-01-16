@@ -11,6 +11,8 @@
 		0D4FDFA01AC4AC350083ADFA /* UIColorExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D4FDF9F1AC4AC350083ADFA /* UIColorExt.swift */; };
 		0D51932F1FEF38C4005A80BB /* JSONAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D51932E1FEF38C4005A80BB /* JSONAdapter.swift */; };
 		0D7CDEBB1AD210A10069F678 /* StringExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D7CDEBA1AD210A10069F678 /* StringExt.swift */; };
+		0D92207B21EFA6AC00810320 /* JSONType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D92207A21EFA6AC00810320 /* JSONType.swift */; };
+		0D92207D21EFB3D100810320 /* Dictionary+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D92207C21EFB3D100810320 /* Dictionary+Ext.swift */; };
 		0D9BEB5520433D010033AF26 /* tweets.json in Resources */ = {isa = PBXBuildFile; fileRef = 0D032F8B1A8CFE79002E8C2D /* tweets.json */; };
 		0D9BEB5720433D300033AF26 /* TwitterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D9BEB5620433D300033AF26 /* TwitterTests.swift */; };
 		0DA7A1151A8BBF5800749F82 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DA7A1141A8BBF5800749F82 /* AppDelegate.swift */; };
@@ -21,7 +23,7 @@
 		0DA7A12B1A8BBF5800749F82 /* JSONTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DA7A12A1A8BBF5800749F82 /* JSONTests.swift */; };
 		0DA7A1351A8BBF6500749F82 /* JSONMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DA7A1341A8BBF6500749F82 /* JSONMapper.swift */; };
 		0DAAA5C8204085FC0080E0AC /* PrivateUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DAAA5C7204085FC0080E0AC /* PrivateUtilities.swift */; };
-		0DC904FF203E740500BA00AD /* JSONMappables.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DC904FE203E740500BA00AD /* JSONMappables.swift */; };
+		0DC904FF203E740500BA00AD /* JSONMappable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DC904FE203E740500BA00AD /* JSONMappable.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,6 +41,8 @@
 		0D4FDF9F1AC4AC350083ADFA /* UIColorExt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIColorExt.swift; sourceTree = "<group>"; };
 		0D51932E1FEF38C4005A80BB /* JSONAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONAdapter.swift; sourceTree = "<group>"; };
 		0D7CDEBA1AD210A10069F678 /* StringExt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExt.swift; sourceTree = "<group>"; };
+		0D92207A21EFA6AC00810320 /* JSONType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONType.swift; sourceTree = "<group>"; };
+		0D92207C21EFB3D100810320 /* Dictionary+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Dictionary+Ext.swift"; sourceTree = "<group>"; };
 		0D9BEB5620433D300033AF26 /* TwitterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwitterTests.swift; sourceTree = "<group>"; };
 		0DA7A10F1A8BBF5800749F82 /* JSON.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JSON.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0DA7A1131A8BBF5800749F82 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -52,7 +56,7 @@
 		0DA7A12A1A8BBF5800749F82 /* JSONTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONTests.swift; sourceTree = "<group>"; };
 		0DA7A1341A8BBF6500749F82 /* JSONMapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONMapper.swift; sourceTree = "<group>"; };
 		0DAAA5C7204085FC0080E0AC /* PrivateUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateUtilities.swift; sourceTree = "<group>"; };
-		0DC904FE203E740500BA00AD /* JSONMappables.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONMappables.swift; sourceTree = "<group>"; };
+		0DC904FE203E740500BA00AD /* JSONMappable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONMappable.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,10 +112,12 @@
 				0DA7A1181A8BBF5800749F82 /* Main.storyboard */,
 				0DA7A11B1A8BBF5800749F82 /* Images.xcassets */,
 				0DA7A11D1A8BBF5800749F82 /* LaunchScreen.xib */,
-				0DA7A1341A8BBF6500749F82 /* JSONMapper.swift */,
 				0D51932E1FEF38C4005A80BB /* JSONAdapter.swift */,
-				0DC904FE203E740500BA00AD /* JSONMappables.swift */,
+				0DA7A1341A8BBF6500749F82 /* JSONMapper.swift */,
+				0DC904FE203E740500BA00AD /* JSONMappable.swift */,
+				0D92207A21EFA6AC00810320 /* JSONType.swift */,
 				0DAAA5C7204085FC0080E0AC /* PrivateUtilities.swift */,
+				0D92207C21EFB3D100810320 /* Dictionary+Ext.swift */,
 				0D7CDEBC1AD210B50069F678 /* Extensions */,
 				0DA7A1121A8BBF5800749F82 /* Supporting Files */,
 			);
@@ -191,15 +197,17 @@
 			attributes = {
 				LastSwiftMigration = 0700;
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 0920;
+				LastUpgradeCheck = 1010;
 				ORGANIZATIONNAME = "Alvarez Productions";
 				TargetAttributes = {
 					0DA7A10E1A8BBF5800749F82 = {
 						CreatedOnToolsVersion = 6.3;
 						DevelopmentTeam = 3L8LER3A32;
+						LastSwiftMigration = 1010;
 					};
 					0DA7A1231A8BBF5800749F82 = {
 						CreatedOnToolsVersion = 6.3;
+						LastSwiftMigration = 1010;
 						TestTargetID = 0DA7A10E1A8BBF5800749F82;
 					};
 				};
@@ -251,8 +259,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				0DAAA5C8204085FC0080E0AC /* PrivateUtilities.swift in Sources */,
+				0D92207B21EFA6AC00810320 /* JSONType.swift in Sources */,
 				0DA7A1351A8BBF6500749F82 /* JSONMapper.swift in Sources */,
-				0DC904FF203E740500BA00AD /* JSONMappables.swift in Sources */,
+				0D92207D21EFB3D100810320 /* Dictionary+Ext.swift in Sources */,
+				0DC904FF203E740500BA00AD /* JSONMappable.swift in Sources */,
 				0D51932F1FEF38C4005A80BB /* JSONAdapter.swift in Sources */,
 				0DA7A1171A8BBF5800749F82 /* ViewController.swift in Sources */,
 				0DA7A1151A8BBF5800749F82 /* AppDelegate.swift in Sources */,
@@ -312,12 +322,14 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -365,12 +377,14 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -409,7 +423,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.alvarezproductions.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -423,7 +437,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.alvarezproductions.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};
@@ -441,7 +455,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.alvarezproductions.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/JSON.app/JSON";
 			};
 			name = Debug;
@@ -456,7 +470,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.alvarezproductions.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/JSON.app/JSON";
 			};
 			name = Release;

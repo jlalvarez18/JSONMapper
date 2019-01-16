@@ -123,21 +123,6 @@ public final class JSONAdapter {
         return object
     }
     
-    public func decode<T: JSONMappable>(data: Data) throws -> [T] {
-        let json = try JSONSerialization.jsonObject(with: data, options: [])
-        
-        guard let array = json as? [Any] else {
-            throw Error.invalidJSONType(actual: type(of: json))
-        }
-        
-        let results = try array.map { (value) -> T in
-            let mapper = JSONMapper(value: value, keyPath: [], options: self.options)
-            return try T(mapper: mapper)
-        }
-        
-        return results
-    }
-    
     public func decode<T: JSONMappable>(jsonString: String) throws -> T {
         guard let data = jsonString.data(using: .utf8) else {
             throw Error.invalidInput
@@ -152,8 +137,8 @@ public final class JSONAdapter {
         return try decode(data: data)
     }
     
-    public func decode<T: JSONMappable>(fileUrl: URL) throws -> [T] {
-        let data = try Data(contentsOf: fileUrl)
+    public func decode<T: JSONMappable>(value: Any) throws -> T {
+        let data = try JSONSerialization.data(withJSONObject: value, options: [])
         
         return try decode(data: data)
     }

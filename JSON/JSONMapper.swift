@@ -11,93 +11,6 @@ import Foundation
 public typealias JSONDict = [String: Any]
 public typealias JSONArray = [JSONDict]
 
-extension Dictionary {
-    
-    public func value(forKeyPath keyPath: String...) -> Any? {
-        return value(forKeyPath: keyPath)
-    }
-    
-    public func value(forKeyPath keys: [String]) -> Any? {
-        var newKeys = keys.flatMap { $0.components(separatedBy: ".") }
-        
-        guard let first = newKeys.first as? Key else {
-            print("Unable to use string as key on type: \(Key.self)")
-            return nil
-        }
-        
-        guard let value = self[first] else {
-            return nil
-        }
-        
-        newKeys.remove(at: 0)
-        
-        if !newKeys.isEmpty, let subDict = value as? [String: Any] {
-            let rejoined = newKeys.joined(separator: ".")
-            
-            return subDict.value(forKeyPath: rejoined)
-        }
-        
-        return value
-    }
-    
-    mutating public func set(value: Any, forKeyPath keyPath: String...) {
-        set(value: value, forKeyPath: keyPath)
-    }
-    
-    mutating public func set(value: Any, forKeyPath keyPath: [String]) {
-        var keys = keyPath
-        
-        guard let first = keys.first as? Key else {
-            print("Unable to use string as key on type: \(Key.self)")
-            return
-        }
-        
-        keys.remove(at: 0)
-        
-        if keys.isEmpty, let val = value as? Value {
-            self[first] = val
-        } else {
-            let rejoined = keys.joined(separator: ".")
-            
-            var subDict: [AnyHashable: Any] = [:]
-            
-            if let sub = self[first] as? Dictionary {
-                subDict = sub
-            }
-            
-            subDict.set(value: value, forKeyPath: rejoined)
-            
-            if let val = subDict as? Value {
-                self[first] = val
-            } else {
-                print("Unable to set value: \(subDict) to dictionary of type: \(type(of: self))")
-            }
-        }
-    }
-}
-
-public protocol JSONMappable {
-    init(mapper: JSONMapper) throws
-}
-
-// TODO: This will only work on Swift 4.1 which will help remove the array versions of decode()
-//extension Array: JSONMappable where Element: JSONMappable {
-//
-//    public init(mapper: JSONMapper) throws {
-//        self.init()
-//
-//        let values: [Any] = try mapper.decodeValue()
-//
-//        for value in values {
-//            let itemMapper = JSONMapper(value: value, keyPath: [], options: mapper.options)
-//
-//            let item: Element = try itemMapper.decodeValue()
-//
-//            self.append(item)
-//        }
-//    }
-//}
-
 public protocol JSONKey {
     func stringValue() -> String
 }
@@ -111,76 +24,6 @@ extension String: JSONKey {
 public extension RawRepresentable where RawValue == String {
     func stringValue() -> String {
         return self.rawValue
-    }
-}
-
-public protocol JSONType {
-    static func defaultValue() -> Self
-}
-
-extension String: JSONType {
-    static public func defaultValue() -> String {
-        return ""
-    }
-}
-extension Int: JSONType {
-    static public func defaultValue() -> Int {
-        return 0
-    }
-}
-extension Int8: JSONType {
-    static public func defaultValue() -> Int8 {
-        return 0
-    }
-}
-extension Int16: JSONType {
-    static public func defaultValue() -> Int16 {
-        return 0
-    }
-}
-extension Int32: JSONType {
-    static public func defaultValue() -> Int32 {
-        return 0
-    }
-}
-extension Int64: JSONType {
-    static public func defaultValue() -> Int64 {
-        return 0
-    }
-}
-extension UInt: JSONType {
-    static public func defaultValue() -> UInt {
-        return 0
-    }
-}
-extension UInt8: JSONType {
-    static public func defaultValue() -> UInt8 {
-        return 0
-    }
-}
-extension UInt16: JSONType {
-    static public func defaultValue() -> UInt16 {
-        return 0
-    }
-}
-extension UInt32: JSONType {
-    static public func defaultValue() -> UInt32 {
-        return 0
-    }
-}
-extension UInt64: JSONType {
-    static public func defaultValue() -> UInt64 {
-        return 0
-    }
-}
-extension Double: JSONType {
-    static public func defaultValue() -> Double {
-        return 0.0
-    }
-}
-extension Float: JSONType {
-    static public func defaultValue() -> Float {
-        return 0.0
     }
 }
 
@@ -241,9 +84,9 @@ public final class JSONMapper {
     }
 }
 
-internal extension JSONMapper {
+extension JSONMapper {
     
-    func keyPathMissingError(_ keys: [JSONKey]) -> Error {
+    public func keyPathMissingError(_ keys: [JSONKey]) -> Error {
         if keys.isEmpty {
             return Error.keyPathMissing(key: keys, debugDescription: "Top value is nil")
         }
@@ -251,12 +94,16 @@ internal extension JSONMapper {
         return Error.keyPathMissing(key: keys, debugDescription: "No value associated with keyPath \(keys)")
     }
     
-    func invalidTypeError(_ keys: [JSONKey], expected: Any.Type, value: Any?) -> Error {
+    public func invalidTypeError(_ keys: [JSONKey], expected: Any.Type, value: Any?) -> Error {
         if let v = value {
             return Error.invalidType(key: keys, expected: expected, actual: type(of: v), debugDescription: "Expected \(expected) value but found \(type(of: v)) instead.")
         }
         
         return Error.invalidType(key: keys, expected: expected, actual: Any.self, debugDescription: "Expected \(expected) value but found nil instead.")
+    }
+    
+    public func dataCorrupted(_ keys: [JSONKey], actual: Any?, debugDescription: String) -> Error {
+        return Error.dataCorrupted(key: self.keyPath, actual: actual, debugDescription: debugDescription)
     }
 }
 
@@ -288,11 +135,11 @@ extension JSONMapper {
                 throw self.keyPathMissingError(self.keyPath)
             }
         }
-        
+
         guard let newValue = value as? T else {
             throw invalidTypeError(self.keyPath, expected: T.self, value: self.rawValue)
         }
-        
+
         return newValue
     }
     
@@ -314,6 +161,14 @@ extension JSONMapper {
     
     public func decodeValue() throws -> Any {
         guard let value = self.rawValue else {
+            throw self.keyPathMissingError(self.keyPath)
+        }
+        
+        return value
+    }
+    
+    public func decodeValue() throws -> [Any] {
+        guard let value = self.rawValue as? [Any] else {
             throw self.keyPathMissingError(self.keyPath)
         }
         
@@ -369,7 +224,7 @@ extension JSONMapper {
 // MARK: - JSON Types -
 
 extension JSONMapper {
-    
+
     public func decodeValue<T: JSONType>(forKeyPath keyPath: [JSONKey]) throws -> T {
         guard let value = try self.value(for: keyPath) else {
             switch valueDecodingStrategy {
@@ -379,45 +234,20 @@ extension JSONMapper {
                 throw self.keyPathMissingError(keyPath)
             }
         }
-        
+
         guard let newValue = value as? T else {
             throw invalidTypeError(self.keyPath, expected: T.self, value: value)
         }
-        
+
         return newValue
     }
-    
+
     public func decodeValue<T: JSONType>(forKeyPath keyPath: JSONKey...) throws -> T {
         return try decodeValue(forKeyPath: keyPath)
     }
-    
-    public func decodeValue<T: JSONType>(forKeyPath keyPath: [JSONKey]) throws -> [T] {
-        guard let value = try self.value(for: keyPath) else {
-            switch valueDecodingStrategy {
-            case .useDefaultValues:
-                return []
-            case .throw:
-                throw self.keyPathMissingError(keyPath)
-            }
-        }
-        
-        guard let newValue = value as? [T] else {
-            throw invalidTypeError(self.keyPath, expected: [T].self, value: value)
-        }
-        
-        return newValue
-    }
-    
-    public func decodeValue<T: JSONType>(forKeyPath keyPath: JSONKey...) throws -> [T] {
-        return try decodeValue(forKeyPath: keyPath)
-    }
-    
+
     public func decode<T: JSONType>(forKeyPath keyPath: JSONKey...) -> T? {
         return try? decodeValue(forKeyPath: keyPath)
-    }
-    
-    public func decode<T: JSONType>(forKeyPath keyPath: JSONKey...) -> [T]? {
-        return try? self.decodeValue(forKeyPath: keyPath)
     }
 }
 
@@ -502,37 +332,11 @@ extension JSONMapper {
         return try decodeValue(forKeyPath: keyPath)
     }
     
-    public func decodeValue<T: JSONMappable>(forKeyPath keyPath: [JSONKey]) throws -> [T] {
-        guard let value = try self.value(for: keyPath) else {
-            switch valueDecodingStrategy {
-            case .useDefaultValues:
-                return []
-            case .throw:
-                throw self.keyPathMissingError(keyPath)
-            }
-        }
-        
-        guard let array = value as? [Any] else {
-            throw invalidTypeError(self.keyPath, expected: [Any].self, value: value)
-        }
-        
-        let results = try array.map { (value) -> T in
-            let mapper = JSONMapper(value: value, keyPath: keyPath, options: self.options)
-            return try T(mapper: mapper)
-        }
-        
-        return results
-    }
-    
-    public func decodeValue<T: JSONMappable>(forKeyPath keyPath: JSONKey...) throws -> [T] {
-        return try decodeValue(forKeyPath: keyPath)
-    }
-    
-    public func decode<T: JSONMappable>(forKeyPath keyPath: JSONKey...) -> T? {
+    public func decode<T: JSONMappable>(forKeyPath keyPath: [JSONKey]) -> T? {
         return try? decodeValue(forKeyPath: keyPath)
     }
     
-    public func decode<T: JSONMappable>(forKeyPath keyPath: JSONKey...) -> [T]? {
+    public func decode<T: JSONMappable>(forKeyPath keyPath: JSONKey...) -> T? {
         return try? decodeValue(forKeyPath: keyPath)
     }
 }
@@ -580,27 +384,23 @@ extension JSONMapper {
         return try mapArrayFor(keyPath: keyPath, block: block) ?? [U]()
     }
     
-    public func flatMapArrayFor<T, U>(keyPath: [JSONKey], block: (_ value: T) -> U?) -> [U]? {
-        return flatMapArrayFor(keyPath: keyPath, block: block)
-    }
-    
-    public func flatMapArrayFor<T, U>(keyPath: JSONKey..., block: (_ value: T) -> U?) throws -> [U]? {
+    public func compactMapFor<T, U>(keyPath: [JSONKey], block: (_ value: T) throws -> U?) throws -> [U] {
         if let array = try self.value(for: keyPath) as? [T] {
-            var newValues = [U]()
+            let newArray = try array.compactMap(block)
             
-            for item in array {
-                if let value = block(item) {
-                    newValues.append(value)
-                }
-            }
-            
-            return newValues
+            return newArray
         }
         
-        return nil
+        return []
     }
     
-    public func flatMapArrayValueFor<T, U>(keyPath: JSONKey..., block: (_ value: T) -> U?) -> [U] {
-        return flatMapArrayFor(keyPath: keyPath, block: block) ?? [U]()
+    public func compactMapArrayFor<T, U>(keyPath: JSONKey..., block: (_ value: T) -> U?) -> [U]? {
+        return try? compactMapFor(keyPath: keyPath, block: block)
+    }
+    
+    public func compactMapArrayValueFor<T, U>(keyPath: JSONKey..., block: (_ value: T) -> U?) throws -> [U] {
+        let values = try compactMapFor(keyPath: keyPath, block: block)
+        
+        return values
     }
 }
