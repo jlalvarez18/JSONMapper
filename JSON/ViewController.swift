@@ -30,9 +30,8 @@ struct Tweet: Mappable {
         case spanish = "es"
     }
     
-    enum Keys: String, JSONKey {
+    enum Keys: String, Key {
         case user
-        case screenName = "user.screen_name"
         case text
         case createdAt
         case favorited
@@ -42,11 +41,11 @@ struct Tweet: Mappable {
     init(mapper: Mapper) throws {
         language = mapper.decode(forKeyPath: Keys.language)
         user = try mapper.decodeValue(forKeyPath: Keys.user)
-        screenName = try mapper.decodeValue(forKeyPath: Keys.screenName)
+        screenName = try mapper.decodeValue(forKeyPath: "user.screen_name")
         text = try mapper.decodeValue(forKeyPath: Keys.text)
         createdAt = try mapper.decodeValue(forKeyPath: Keys.createdAt)
         favorited = try mapper.decodeValue(forKeyPath: Keys.favorited)
-        urlItems = try mapper.decodeValue(forKeyPath: "entities", "urls")
+        urlItems = try mapper.decodeValue(forKeyPath: ["entities", "urls"], decoder: JSONDecoder())
     }
 }
 
@@ -67,7 +66,7 @@ struct User: Mappable {
         idString = try mapper.decodeValue(forKeyPath: "id_str")
         id = try mapper.decodeValue(forKeyPath: "id")
         createdAt = try mapper.decodeValue(forKeyPath: "created_at")
-        urlItems = try mapper.decodeValue(forKeyPath: "entities", "description", "urls")
+        urlItems = try mapper.decodeValue(forKeyPath: ["entities", "description", "urls"], decoder: JSONDecoder())
         defaultProfile = try mapper.decodeValue(forKeyPath: "default_profile")
         followersCount = try mapper.decodeValue(forKeyPath: "followers_count")
         url = mapper.decode(forKeyPath: "url")
@@ -79,16 +78,23 @@ struct User: Mappable {
     }
 }
 
-struct URLItem: Mappable {
+struct URLItem: Decodable {
     let displayURL: String
     let expandedURL: URL
     let url: URL
     let indices: [Int]
     
-    init(mapper: Mapper) throws {
-        displayURL = try mapper.decodeValue(forKeyPath: "display_url")
-        expandedURL = try mapper.decodeValue(forKeyPath: "expanded_url")
-        url = try mapper.decodeValue(forKeyPath: "url")
-        indices = try mapper.decodeValue(forKeyPath: "indices")
+    enum CodingKeys: String, CodingKey {
+        case displayURL = "display_url"
+        case expandedURL = "expanded_url"
+        case url
+        case indices
     }
+    
+    //    init(mapper: Mapper) throws {
+    //        displayUrl = try mapper.decodeValue(forKeyPath: "display_url")
+    //        expandedUrl = try mapper.decodeValue(forKeyPath: "expanded_url")
+    //        url = try mapper.decodeValue(forKeyPath: "url")
+    //        indices = try mapper.decodeValue(forKeyPath: "indices")
+    //    }
 }

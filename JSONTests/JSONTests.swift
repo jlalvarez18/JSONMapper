@@ -73,7 +73,7 @@ class JSONTests: XCTestCase {
         let floatArray: [Float]
         let enumArray: [MyEnum]
         
-        enum Keys: String, JSONKey {
+        enum Keys: String, Key {
             case string
             case int
             case bool
