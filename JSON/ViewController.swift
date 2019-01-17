@@ -15,7 +15,7 @@ class ViewController: UIViewController {
     }
 }
 
-struct Tweet: JSONMappable {
+struct Tweet: Mappable {
     let user: User
     let text: String
     let screenName: String
@@ -24,7 +24,7 @@ struct Tweet: JSONMappable {
     let language: Language?
     let urlItems: [URLItem]
     
-    enum Language: String, JSONMappable {
+    enum Language: String, Mappable {
         case english = "en"
         case french = "fr"
         case spanish = "es"
@@ -39,7 +39,7 @@ struct Tweet: JSONMappable {
         case language = "lang"
     }
     
-    init(mapper: JSONMapper) throws {
+    init(mapper: Mapper) throws {
         language = mapper.decode(forKeyPath: Keys.language)
         user = try mapper.decodeValue(forKeyPath: Keys.user)
         screenName = try mapper.decodeValue(forKeyPath: Keys.screenName)
@@ -50,7 +50,7 @@ struct Tweet: JSONMappable {
     }
 }
 
-struct User: JSONMappable {
+struct User: Mappable {
     let name: String
     let idString: String
     let id: Int
@@ -62,7 +62,7 @@ struct User: JSONMappable {
     let description: String
     let backgroundColor: UIColor?
     
-    init(mapper: JSONMapper) throws {
+    init(mapper: Mapper) throws {
         name = try mapper.decodeValue(forKeyPath: "name")
         idString = try mapper.decodeValue(forKeyPath: "id_str")
         id = try mapper.decodeValue(forKeyPath: "id")
@@ -73,19 +73,19 @@ struct User: JSONMappable {
         url = mapper.decode(forKeyPath: "url")
         description = try mapper.decodeValue(forKeyPath: "description")
         
-        backgroundColor = try mapper.transform(keyPath: "profile_background_color", block: { (value) -> UIColor? in
+        backgroundColor = mapper.transform(keyPath: "profile_background_color", block: { (value) -> UIColor in
             return UIColor.fromHex(hex: value)
         })
     }
 }
 
-struct URLItem: JSONMappable {
+struct URLItem: Mappable {
     let displayURL: String
     let expandedURL: URL
     let url: URL
     let indices: [Int]
     
-    init(mapper: JSONMapper) throws {
+    init(mapper: Mapper) throws {
         displayURL = try mapper.decodeValue(forKeyPath: "display_url")
         expandedURL = try mapper.decodeValue(forKeyPath: "expanded_url")
         url = try mapper.decodeValue(forKeyPath: "url")

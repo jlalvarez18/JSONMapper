@@ -11,24 +11,24 @@ import XCTest
 
 class JSONTests: XCTestCase {
     
-    lazy var adapter: JSONAdapter = {
+    lazy var adapter: Adapter = {
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "en_US_POSIX")
         dateFormatter.dateFormat = "EEE MMM dd HH:mm:ss Z yyyy"
         
-        let adapter = JSONAdapter()
+        let adapter = Adapter()
         adapter.dateDecodingStrategy = .formatted(dateFormatter)
         adapter.keyDecodingStrategy = .convertToSnakeCase
         
         return adapter
     }()
     
-    enum TestEnum: String {
+    enum MyEnum: String, Mappable {
         case One = "one"
         case Two = "two"
     }
     
-    let testDict: JSONDict = [
+    let testDict: [String: Any] = [
         "string": "test_string",
         "int": 277,
         "bool": true,
@@ -37,15 +37,18 @@ class JSONTests: XCTestCase {
         "array": [
             "string": ["string1", "string2", "string3"],
             "int": [1,2,3,4],
-            "float": [0.1, 0.2]
+            "float": [0.1, 0.2],
+            "enum": ["one", "two"]
         ],
         "set": ["string1", "string2", "string3"],
         "dictionary": ["key": "value"],
-        "enum": ["one", "two", "three"]
+        "enum": "two",
+        "date": "Thu Feb 12 15:26:30 +0000 2015",
+        "color": "0084B4"
     ]
     
-    lazy var testDictArray: JSONArray = {
-        var testDictArray = JSONArray()
+    lazy var testDictArray: [[String: Any]] = {
+        var testDictArray = [[String: Any]]()
         
         for _ in 0..<10 {
             testDictArray.append(self.testDict)
@@ -54,34 +57,56 @@ class JSONTests: XCTestCase {
         return testDictArray
     }()
     
-    struct TestObject: JSONMappable {
+    struct TestObject: Mappable {
         let string: String
         let int: Int
         let bool: Bool
         let double: Double
         let float: Float
+        let dictionary: [String: Any]
+        let enumValue: MyEnum
+        let date: Date
+        let color: UIColor?
+        
         let stringArray: [String]
         let intArray: [Int]
         let floatArray: [Float]
-        let dictionary: JSONDict
-        let enums: [TestEnum]
+        let enumArray: [MyEnum]
         
-        init(mapper: JSONMapper) throws {
-            string = try mapper.decodeValue(forKeyPath: "string")
-            int = try mapper.decodeValue(forKeyPath: "int")
-            bool = try mapper.decodeValue(forKeyPath: "bool")
-            double = try mapper.decodeValue(forKeyPath: ["double"])
-            float = try mapper.decodeValue(forKeyPath: "float")
+        enum Keys: String, JSONKey {
+            case string
+            case int
+            case bool
+            case double
+            case float
+            case dictionary
+            case enumValue = "enum"
+            case date
+            case color
             
-            stringArray = try mapper.decodeValue(forKeyPath: "array", "string")
-            intArray = try mapper.decodeValue(forKeyPath: "array", "int")
-            floatArray = try mapper.decodeValue(forKeyPath: "array", "float")
-            
-            dictionary = try mapper.decodeValue(forKeyPath: "dictionary")
-            
-            enums = mapper.flatMapArrayValueFor(keyPath: "enum", block: { (value) -> TestEnum? in
-                return TestEnum(rawValue: value)
+            case stringArray = "array.string"
+            case intArray = "array.int"
+            case floatArray = "array.float"
+            case enumArray = "array.enum"
+        }
+        
+        init(mapper: Mapper) throws {
+            string = try mapper.decodeValue(forKeyPath: Keys.string)
+            int = try mapper.decodeValue(forKeyPath: Keys.int)
+            bool = try mapper.decodeValue(forKeyPath: Keys.bool)
+            double = try mapper.decodeValue(forKeyPath: Keys.double)
+            float = try mapper.decodeValue(forKeyPath: Keys.float)
+            dictionary = try mapper.decodeValue(forKeyPath: Keys.dictionary)
+            enumValue = try mapper.decodeValue(forKeyPath: Keys.enumValue)
+            date = try mapper.decodeValue(forKeyPath: Keys.date)
+            color = mapper.transform(keyPath: Keys.color, block: { (value) -> UIColor in
+                return UIColor.fromHex(hex: value)
             })
+            
+            stringArray = try mapper.decodeValue(forKeyPath: Keys.stringArray)
+            intArray = try mapper.decodeValue(forKeyPath: Keys.intArray)
+            floatArray = try mapper.decodeValue(forKeyPath: Keys.floatArray)
+            enumArray = try mapper.decodeValue(forKeyPath: Keys.enumArray)
         }
     }
     

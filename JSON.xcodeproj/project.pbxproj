@@ -9,9 +9,8 @@
 /* Begin PBXBuildFile section */
 		0D032F8C1A8CFE79002E8C2D /* tweets.json in Resources */ = {isa = PBXBuildFile; fileRef = 0D032F8B1A8CFE79002E8C2D /* tweets.json */; };
 		0D4FDFA01AC4AC350083ADFA /* UIColorExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D4FDF9F1AC4AC350083ADFA /* UIColorExt.swift */; };
-		0D51932F1FEF38C4005A80BB /* JSONAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D51932E1FEF38C4005A80BB /* JSONAdapter.swift */; };
+		0D51932F1FEF38C4005A80BB /* Adapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D51932E1FEF38C4005A80BB /* Adapter.swift */; };
 		0D7CDEBB1AD210A10069F678 /* StringExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D7CDEBA1AD210A10069F678 /* StringExt.swift */; };
-		0D92207B21EFA6AC00810320 /* JSONType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D92207A21EFA6AC00810320 /* JSONType.swift */; };
 		0D92207D21EFB3D100810320 /* Dictionary+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D92207C21EFB3D100810320 /* Dictionary+Ext.swift */; };
 		0D9BEB5520433D010033AF26 /* tweets.json in Resources */ = {isa = PBXBuildFile; fileRef = 0D032F8B1A8CFE79002E8C2D /* tweets.json */; };
 		0D9BEB5720433D300033AF26 /* TwitterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D9BEB5620433D300033AF26 /* TwitterTests.swift */; };
@@ -21,9 +20,9 @@
 		0DA7A11C1A8BBF5800749F82 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0DA7A11B1A8BBF5800749F82 /* Images.xcassets */; };
 		0DA7A11F1A8BBF5800749F82 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0DA7A11D1A8BBF5800749F82 /* LaunchScreen.xib */; };
 		0DA7A12B1A8BBF5800749F82 /* JSONTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DA7A12A1A8BBF5800749F82 /* JSONTests.swift */; };
-		0DA7A1351A8BBF6500749F82 /* JSONMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DA7A1341A8BBF6500749F82 /* JSONMapper.swift */; };
+		0DA7A1351A8BBF6500749F82 /* Mapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DA7A1341A8BBF6500749F82 /* Mapper.swift */; };
 		0DAAA5C8204085FC0080E0AC /* PrivateUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DAAA5C7204085FC0080E0AC /* PrivateUtilities.swift */; };
-		0DC904FF203E740500BA00AD /* JSONMappable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DC904FE203E740500BA00AD /* JSONMappable.swift */; };
+		0DC904FF203E740500BA00AD /* Mappable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DC904FE203E740500BA00AD /* Mappable.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,9 +38,8 @@
 /* Begin PBXFileReference section */
 		0D032F8B1A8CFE79002E8C2D /* tweets.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = tweets.json; sourceTree = "<group>"; };
 		0D4FDF9F1AC4AC350083ADFA /* UIColorExt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIColorExt.swift; sourceTree = "<group>"; };
-		0D51932E1FEF38C4005A80BB /* JSONAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONAdapter.swift; sourceTree = "<group>"; };
+		0D51932E1FEF38C4005A80BB /* Adapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Adapter.swift; sourceTree = "<group>"; };
 		0D7CDEBA1AD210A10069F678 /* StringExt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExt.swift; sourceTree = "<group>"; };
-		0D92207A21EFA6AC00810320 /* JSONType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONType.swift; sourceTree = "<group>"; };
 		0D92207C21EFB3D100810320 /* Dictionary+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Dictionary+Ext.swift"; sourceTree = "<group>"; };
 		0D9BEB5620433D300033AF26 /* TwitterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwitterTests.swift; sourceTree = "<group>"; };
 		0DA7A10F1A8BBF5800749F82 /* JSON.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JSON.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -54,9 +52,9 @@
 		0DA7A1241A8BBF5800749F82 /* JSONTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = JSONTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0DA7A1291A8BBF5800749F82 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0DA7A12A1A8BBF5800749F82 /* JSONTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONTests.swift; sourceTree = "<group>"; };
-		0DA7A1341A8BBF6500749F82 /* JSONMapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONMapper.swift; sourceTree = "<group>"; };
+		0DA7A1341A8BBF6500749F82 /* Mapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mapper.swift; sourceTree = "<group>"; };
 		0DAAA5C7204085FC0080E0AC /* PrivateUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateUtilities.swift; sourceTree = "<group>"; };
-		0DC904FE203E740500BA00AD /* JSONMappable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONMappable.swift; sourceTree = "<group>"; };
+		0DC904FE203E740500BA00AD /* Mappable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mappable.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,10 +110,9 @@
 				0DA7A1181A8BBF5800749F82 /* Main.storyboard */,
 				0DA7A11B1A8BBF5800749F82 /* Images.xcassets */,
 				0DA7A11D1A8BBF5800749F82 /* LaunchScreen.xib */,
-				0D51932E1FEF38C4005A80BB /* JSONAdapter.swift */,
-				0DA7A1341A8BBF6500749F82 /* JSONMapper.swift */,
-				0DC904FE203E740500BA00AD /* JSONMappable.swift */,
-				0D92207A21EFA6AC00810320 /* JSONType.swift */,
+				0D51932E1FEF38C4005A80BB /* Adapter.swift */,
+				0DA7A1341A8BBF6500749F82 /* Mapper.swift */,
+				0DC904FE203E740500BA00AD /* Mappable.swift */,
 				0DAAA5C7204085FC0080E0AC /* PrivateUtilities.swift */,
 				0D92207C21EFB3D100810320 /* Dictionary+Ext.swift */,
 				0D7CDEBC1AD210B50069F678 /* Extensions */,
@@ -259,11 +256,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				0DAAA5C8204085FC0080E0AC /* PrivateUtilities.swift in Sources */,
-				0D92207B21EFA6AC00810320 /* JSONType.swift in Sources */,
-				0DA7A1351A8BBF6500749F82 /* JSONMapper.swift in Sources */,
+				0DA7A1351A8BBF6500749F82 /* Mapper.swift in Sources */,
 				0D92207D21EFB3D100810320 /* Dictionary+Ext.swift in Sources */,
-				0DC904FF203E740500BA00AD /* JSONMappable.swift in Sources */,
-				0D51932F1FEF38C4005A80BB /* JSONAdapter.swift in Sources */,
+				0DC904FF203E740500BA00AD /* Mappable.swift in Sources */,
+				0D51932F1FEF38C4005A80BB /* Adapter.swift in Sources */,
 				0DA7A1171A8BBF5800749F82 /* ViewController.swift in Sources */,
 				0DA7A1151A8BBF5800749F82 /* AppDelegate.swift in Sources */,
 				0D4FDFA01AC4AC350083ADFA /* UIColorExt.swift in Sources */,

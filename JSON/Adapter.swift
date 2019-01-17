@@ -8,18 +8,11 @@
 
 import Foundation
 
-public final class JSONAdapter {
+public final class Adapter {
     
     public enum Error: Swift.Error {
         case invalidJSONType(actual: Any.Type)
         case invalidInput
-    }
-    
-    struct Options {
-        let dateDecodingStrategy: DateDecodingStrategy
-        let dataDecodingStrategy: DataDecodingStrategy
-        let valueDecodingStrategy: ValueDecodingStrategy
-        let keyDecodingStrategy: KeyDecodingStrategy
     }
     
     /// The strategy to use for decoding `Date` values.
@@ -47,16 +40,6 @@ public final class JSONAdapter {
         
         /// Decode the `Data` as a custom value decoded by the given closure.
         case custom((Any) throws -> Data)
-    }
-    
-    public enum ValueDecodingStrategy {
-        /// If value is not present, default values will be used when calling decodeValue().
-        /// This only works for JSONType, JSONDict, JSONArray and Bool values.
-        /// This is the default strategy.
-        case useDefaultValues
-        
-        /// If value is not present or value is not of the same type, decodeValue() will throw an error
-        case `throw`
     }
     
     public enum KeyDecodingStrategy {
@@ -96,34 +79,52 @@ public final class JSONAdapter {
         }
     }
     
+    /// The strategy to use for non-JSON-conforming floating-point values (IEEE 754 infinity and NaN).
+    public enum NonConformingFloatDecodingStrategy {
+        /// Throw upon encountering non-conforming values. This is the default strategy.
+        case `throw`
+        
+        /// Decode the values from the given representation strings.
+        case convertFromString(positiveInfinity: String, negativeInfinity: String, nan: String)
+    }
+    
     /// The strategy to use in decoding dates. Defaults to `.iso8601`.
-    public var dateDecodingStrategy: JSONAdapter.DateDecodingStrategy = .iso8601
+    public var dateDecodingStrategy: DateDecodingStrategy = .iso8601
     
     /// The strategy to use in decoding binary data. Defaults to `.base64`.
-    public var dataDecodingStrategy: JSONAdapter.DataDecodingStrategy = .base64
+    public var dataDecodingStrategy: DataDecodingStrategy = .base64
     
-    public var valueDecodingStrategy: JSONAdapter.ValueDecodingStrategy = .useDefaultValues
+    /// The strategy to use for decoding keys. Defaults to `.useDefaultKeys`.
+    public var keyDecodingStrategy: KeyDecodingStrategy = .useDefaultKeys
     
-    public var keyDecodingStrategy: JSONAdapter.KeyDecodingStrategy = .useDefaultKeys
+    /// The strategy to use in decoding non-conforming numbers. Defaults to `.throw`
+    public var nonConformingFloatDecodingStrategy: NonConformingFloatDecodingStrategy = .throw
+    
+    struct Options {
+        let dateDecodingStrategy: DateDecodingStrategy
+        let dataDecodingStrategy: DataDecodingStrategy
+        let keyDecodingStrategy: KeyDecodingStrategy
+        let nonConformingFloatDecodingStrategy: NonConformingFloatDecodingStrategy
+    }
     
     fileprivate var options: Options {
         return Options(dateDecodingStrategy: dateDecodingStrategy,
                        dataDecodingStrategy: dataDecodingStrategy,
-                       valueDecodingStrategy: valueDecodingStrategy,
-                       keyDecodingStrategy: keyDecodingStrategy)
+                       keyDecodingStrategy: keyDecodingStrategy,
+                       nonConformingFloatDecodingStrategy: nonConformingFloatDecodingStrategy)
     }
     
-    public func decode<T: JSONMappable>(data: Data) throws -> T {
+    public func decode<T: Mappable>(data: Data) throws -> T {
         let json = try JSONSerialization.jsonObject(with: data, options: [])
         
-        let mapper = JSONMapper(value: json, keyPath: [], options: self.options)
+        let mapper = Mapper(value: json, keyPath: [], options: self.options)
         
         let object = try T(mapper: mapper)
         
         return object
     }
     
-    public func decode<T: JSONMappable>(jsonString: String) throws -> T {
+    public func decode<T: Mappable>(jsonString: String) throws -> T {
         guard let data = jsonString.data(using: .utf8) else {
             throw Error.invalidInput
         }
@@ -131,13 +132,13 @@ public final class JSONAdapter {
         return try decode(data: data)
     }
     
-    public func decode<T: JSONMappable>(fileUrl: URL) throws -> T {
+    public func decode<T: Mappable>(fileUrl: URL) throws -> T {
         let data = try Data(contentsOf: fileUrl)
         
         return try decode(data: data)
     }
     
-    public func decode<T: JSONMappable>(value: Any) throws -> T {
+    public func decode<T: Mappable>(value: Any) throws -> T {
         let data = try JSONSerialization.data(withJSONObject: value, options: [])
         
         return try decode(data: data)
