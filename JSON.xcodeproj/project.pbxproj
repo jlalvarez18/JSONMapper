@@ -83,6 +83,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0D5A39B821F2551900618168 /* Library */ = {
+			isa = PBXGroup;
+			children = (
+				0D51932E1FEF38C4005A80BB /* Adapter.swift */,
+				0DA7A1341A8BBF6500749F82 /* Mapper.swift */,
+				0D92208021F1839600810320 /* KeyedMapper.swift */,
+				0D92208221F1898F00810320 /* UnkeyedMapper.swift */,
+				0D92208421F18E8F00810320 /* SingleValueMapper.swift */,
+				0DC904FE203E740500BA00AD /* Mappable.swift */,
+				0D92207E21F11D9200810320 /* Key.swift */,
+				0DAAA5C7204085FC0080E0AC /* PrivateUtilities.swift */,
+				0D92207C21EFB3D100810320 /* Dictionary+Ext.swift */,
+			);
+			path = Library;
+			sourceTree = "<group>";
+		};
 		0D7CDEBC1AD210B50069F678 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -118,15 +134,7 @@
 				0DA7A1181A8BBF5800749F82 /* Main.storyboard */,
 				0DA7A11B1A8BBF5800749F82 /* Images.xcassets */,
 				0DA7A11D1A8BBF5800749F82 /* LaunchScreen.xib */,
-				0D51932E1FEF38C4005A80BB /* Adapter.swift */,
-				0DA7A1341A8BBF6500749F82 /* Mapper.swift */,
-				0D92208021F1839600810320 /* KeyedMapper.swift */,
-				0D92208221F1898F00810320 /* UnkeyedMapper.swift */,
-				0D92208421F18E8F00810320 /* SingleValueMapper.swift */,
-				0DC904FE203E740500BA00AD /* Mappable.swift */,
-				0D92207E21F11D9200810320 /* Key.swift */,
-				0DAAA5C7204085FC0080E0AC /* PrivateUtilities.swift */,
-				0D92207C21EFB3D100810320 /* Dictionary+Ext.swift */,
+				0D5A39B821F2551900618168 /* Library */,
 				0D7CDEBC1AD210B50069F678 /* Extensions */,
 				0DA7A1121A8BBF5800749F82 /* Supporting Files */,
 			);
