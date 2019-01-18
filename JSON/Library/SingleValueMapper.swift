@@ -33,7 +33,7 @@ public struct SingleValueMapper {
         return try? decodeValue()
     }
     
-    // MARK: Mappable Values
+    // MARK: - Mappable Values -
     
     public func decodeValue<T>() throws -> T where T: Mappable {
         let newMapper = Mapper(value: self.rawValue, keyPath: self.keyPath, options: self.mapper.options)
@@ -45,7 +45,7 @@ public struct SingleValueMapper {
         return try? decodeValue()
     }
     
-    // MARK: Decodable values
+    // MARK: - Decodable values -
     
     public func decodeValue<T>(decoder: JSONDecoder) throws -> T where T: Decodable {
         let data = try JSONSerialization.data(withJSONObject: self.rawValue, options: [])
@@ -55,5 +55,22 @@ public struct SingleValueMapper {
     
     public func decode<T>(decoder: JSONDecoder) -> T? where T: Decodable {
         return try? decodeValue(decoder: decoder)
+    }
+    
+    // MARK: - Transforms -
+    
+    public func transformValue<T, U>(forKeyPath keyPath: Key, block: (T) throws -> U) throws -> U {
+        guard let value = self.rawValue as? T else {
+            throw Mapper.Error.invalidType(key: keyPath,
+                                           expected: T.self,
+                                           actual: type(of: self.rawValue),
+                                           debugDescription: "Expected \(T.self) value but found \(type(of: self.rawValue)) instead.")
+        }
+        
+        return try block(value)
+    }
+    
+    public func transform<T, U>(forKeyPath keyPath: Key, block: (T) throws -> U) -> U? {
+        return try? transformValue(forKeyPath: keyPath, block: block)
     }
 }

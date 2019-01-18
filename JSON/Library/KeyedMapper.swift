@@ -24,13 +24,17 @@ public struct KeyedMapper {
         return self.rawValue[keyPath.stringValue()] != nil
     }
     
+    public var allKeys: [Key] {
+        return self.rawValue.keys.map { $0 }
+    }
+    
     public func value(forKeyPath keyPath: Key) -> Any? {
         let keys = keyPath.keys().map { self.mapper.keyDecodingStrategy.convert($0.stringValue()) }
         
         return self.rawValue.value(forKeyPath: keys)
     }
     
-    // MARK: Mappable Values
+    // MARK: - Mappable Values -
     
     public func decodeValue<T>(forKeyPath keyPath: Key) throws -> T where T: Mappable {
         guard let value = self.value(forKeyPath: keyPath) else {
@@ -46,7 +50,7 @@ public struct KeyedMapper {
         return try? decodeValue(forKeyPath: keyPath)
     }
     
-    // MARK: Decodable Values
+    // MARK: - Decodable Values -
     
     public func decodeValue<T>(forKeyPath keyPath: Key, decoder: JSONDecoder) throws -> T where T: Decodable {
         guard let value = self.value(forKeyPath: keyPath) else {
@@ -62,7 +66,7 @@ public struct KeyedMapper {
         return try? decodeValue(forKeyPath: keyPath, decoder: decoder)
     }
     
-    // MARK: Keyed Mapper Values
+    // MARK: - Keyed Mapper Values -
     
     public func keyedMapperValue(forKeyPath keyPath: Key) throws -> KeyedMapper {
         guard let value = self.value(forKeyPath: keyPath) else {
@@ -85,7 +89,7 @@ public struct KeyedMapper {
         return try? keyedMapperValue(forKeyPath: keyPath)
     }
     
-    // MARK: Unkeyed Mapper values
+    // MARK: - Unkeyed Mapper values -
     
     public func unkeyedMapperValue(forKeyPath keyPath: Key) throws -> UnkeyedMapper {
         guard let value = self.value(forKeyPath: keyPath) else {
@@ -106,5 +110,26 @@ public struct KeyedMapper {
     
     public func unkeyedMapper(forKeyPath keyPath: Key) throws -> UnkeyedMapper? {
         return try? unkeyedMapperValue(forKeyPath: keyPath)
+    }
+    
+    // MARK: - Transforms -
+    
+    public func transformValue<T, U>(forKeyPath keyPath: Key, block: (T) throws -> U) throws -> U {
+        guard let value = self.value(forKeyPath: keyPath) else {
+            throw Mapper.Error.keyPathMissing(key: keyPath, debugDescription: "No value associated with keyPath \(keyPath)")
+        }
+        
+        guard let newValue = value as? T else {
+            throw Mapper.Error.invalidType(key: keyPath,
+                                           expected: T.self,
+                                           actual: type(of: value),
+                                           debugDescription: "Expected \(T.self) value but found \(type(of: value)) instead.")
+        }
+        
+        return try block(newValue)
+    }
+    
+    public func transform<T, U>(forKeyPath keyPath: Key, block: (T) throws -> U) -> U? {
+        return try? transformValue(forKeyPath: keyPath, block: block)
     }
 }

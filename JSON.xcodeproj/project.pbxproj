@@ -10,6 +10,7 @@
 		0D032F8C1A8CFE79002E8C2D /* tweets.json in Resources */ = {isa = PBXBuildFile; fileRef = 0D032F8B1A8CFE79002E8C2D /* tweets.json */; };
 		0D4FDFA01AC4AC350083ADFA /* UIColorExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D4FDF9F1AC4AC350083ADFA /* UIColorExt.swift */; };
 		0D51932F1FEF38C4005A80BB /* Adapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D51932E1FEF38C4005A80BB /* Adapter.swift */; };
+		0D5A39BA21F25AC500618168 /* Tweet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D5A39B921F25AC500618168 /* Tweet.swift */; };
 		0D7CDEBB1AD210A10069F678 /* StringExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D7CDEBA1AD210A10069F678 /* StringExt.swift */; };
 		0D92207D21EFB3D100810320 /* Dictionary+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D92207C21EFB3D100810320 /* Dictionary+Ext.swift */; };
 		0D92207F21F11D9200810320 /* Key.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D92207E21F11D9200810320 /* Key.swift */; };
@@ -43,6 +44,7 @@
 		0D032F8B1A8CFE79002E8C2D /* tweets.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = tweets.json; sourceTree = "<group>"; };
 		0D4FDF9F1AC4AC350083ADFA /* UIColorExt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIColorExt.swift; sourceTree = "<group>"; };
 		0D51932E1FEF38C4005A80BB /* Adapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Adapter.swift; sourceTree = "<group>"; };
+		0D5A39B921F25AC500618168 /* Tweet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tweet.swift; sourceTree = "<group>"; };
 		0D7CDEBA1AD210A10069F678 /* StringExt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExt.swift; sourceTree = "<group>"; };
 		0D92207C21EFB3D100810320 /* Dictionary+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Dictionary+Ext.swift"; sourceTree = "<group>"; };
 		0D92207E21F11D9200810320 /* Key.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Key.swift; sourceTree = "<group>"; };
@@ -134,6 +136,7 @@
 				0DA7A1181A8BBF5800749F82 /* Main.storyboard */,
 				0DA7A11B1A8BBF5800749F82 /* Images.xcassets */,
 				0DA7A11D1A8BBF5800749F82 /* LaunchScreen.xib */,
+				0D5A39B921F25AC500618168 /* Tweet.swift */,
 				0D5A39B821F2551900618168 /* Library */,
 				0D7CDEBC1AD210B50069F678 /* Extensions */,
 				0DA7A1121A8BBF5800749F82 /* Supporting Files */,
@@ -278,6 +281,7 @@
 				0D92208321F1898F00810320 /* UnkeyedMapper.swift in Sources */,
 				0DAAA5C8204085FC0080E0AC /* PrivateUtilities.swift in Sources */,
 				0D92207F21F11D9200810320 /* Key.swift in Sources */,
+				0D5A39BA21F25AC500618168 /* Tweet.swift in Sources */,
 				0D92208121F1839600810320 /* KeyedMapper.swift in Sources */,
 				0DA7A1351A8BBF6500749F82 /* Mapper.swift in Sources */,
 				0D92207D21EFB3D100810320 /* Dictionary+Ext.swift in Sources */,

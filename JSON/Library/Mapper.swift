@@ -137,22 +137,3 @@ extension Mapper {
         return newMapper
     }
 }
-
-// MARK: - Transforms -
-
-//extension Mapper {
-//
-//    public func transformValue<T, U>(keyPath: Key, block: (_ value: T) -> U) throws -> U {
-//        let value = self.value(for: keyPath)
-//
-//        guard let newValue = value as? T else {
-//            throw invalidTypeError(keyPath, expected: T.self, value: type(of: value))
-//        }
-//
-//        return block(newValue)
-//    }
-//
-//    public func transform<T, U>(keyPath: Key, block: (_ value: T) -> U) -> U? {
-//        return try? transformValue(keyPath: keyPath, block: block)
-//    }
-//}
