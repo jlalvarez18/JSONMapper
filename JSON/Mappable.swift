@@ -19,12 +19,14 @@ extension Array: Mappable where Element: Mappable {
     public init(mapper: Mapper) throws {
         self.init()
         
-        let values = try mapper.decodeJSONArrayValue()
+        let container = try mapper.unkeyedMapperValue()
+        
+        let values = container.rawValue
         
         for value in values {
-            let itemMapper = Mapper(value: value, keyPath: [], options: mapper.options)
+            let mapper = Mapper(value: value, keyPath: mapper.keyPath, options: mapper.options)
             
-            let item: Element = try itemMapper.decodeValue()
+            let item = try Element(mapper: mapper)
             
             self.append(item)
         }
@@ -36,13 +38,9 @@ extension Array: Mappable where Element: Mappable {
 extension Dictionary: Mappable where Key == String, Value == Any {
     
     public init(mapper: Mapper) throws {
-        let value = try mapper.decodeJSONObjectValue()
+        let container = try mapper.keyedMapperValue()
         
-        guard let newValue = value as? [String: Any] else {
-            throw mapper.invalidTypeError(mapper.keyPath, expected: [String: Any].self, value: type(of: value))
-        }
-        
-        self = newValue
+        self = container.rawValue
     }
 }
 
@@ -51,7 +49,9 @@ extension Dictionary: Mappable where Key == String, Value == Any {
 extension RawRepresentable {
     
     init(mapper: Mapper) throws {
-        let value = try mapper.decodeJSONObjectValue()
+        let container = try mapper.singleMapperValue()
+        
+        let value = container.rawValue
         
         guard let newValue = value as? RawValue else {
             throw mapper.invalidTypeError(mapper.keyPath, expected: RawValue.self, value: value)
@@ -68,10 +68,10 @@ extension RawRepresentable {
 extension String: Mappable {
     
     public init(mapper: Mapper) throws {
-        let value = try mapper.decodeJSONObjectValue()
+        let container = try mapper.singleMapperValue()
         
-        guard let newValue = value as? String else {
-            throw mapper.invalidTypeError(mapper.keyPath, expected: String.self, value: value)
+        guard let newValue = container.rawValue as? String else {
+            throw mapper.invalidTypeError(mapper.keyPath, expected: String.self, value: container.rawValue)
         }
         
         self = newValue
@@ -83,9 +83,11 @@ extension String: Mappable {
 extension Data: Mappable {
     
     public init(mapper: Mapper) throws {
+        let container = try mapper.singleMapperValue()
+        
         switch mapper.dataDecodingStrategy {
         case .base64:
-            let value: String = try mapper.decodeValue()
+            let value: String = try container.decodeValue()
             
             guard let data = Data(base64Encoded: value) else {
                 throw Mapper.Error.dataCorrupted(key: mapper.keyPath, actual: value, debugDescription: "Encountered Data is not valid Base64.")
@@ -94,9 +96,7 @@ extension Data: Mappable {
             self = data
             
         case .custom(let block):
-            let value = try mapper.decodeJSONObjectValue()
-            
-            self = try block(value)
+            self = try block(container.rawValue)
         }
     }
 }
@@ -106,7 +106,9 @@ extension Data: Mappable {
 extension URL: Mappable {
     
     public init(mapper: Mapper) throws {
-        let urlString: String = try mapper.decodeValue()
+        let container = try mapper.singleMapperValue()
+        
+        let urlString: String = try container.decodeValue()
         
         guard let url = URL(string: urlString) else {
             throw mapper.dataCorrupted(mapper.keyPath, actual: urlString, debugDescription: "Invalid URL string.")
@@ -121,7 +123,9 @@ extension URL: Mappable {
 extension Bool: Mappable {
     
     public init(mapper: Mapper) throws {
-        let value = try mapper.decodeJSONObjectValue()
+        let container = try mapper.singleMapperValue()
+        
+        let value = container.rawValue
         
         let boolValue: Bool?
         
@@ -169,9 +173,11 @@ private let _iso8601Formatter: ISO8601DateFormatter = {
 extension Date: Mappable {
     
     public init(mapper: Mapper) throws {
+        let container = try mapper.singleMapperValue()
+        
         switch mapper.dateDecodingStrategy {
         case .formatted(let formatter):
-            let value: String = try mapper.decodeValue()
+            let value: String = try container.decodeValue()
             
             guard let date = formatter.date(from: value) else {
                 throw Mapper.Error.dataCorrupted(key: mapper.keyPath, actual: value, debugDescription: "Date string does not match format expected by formatter.")
@@ -179,17 +185,17 @@ extension Date: Mappable {
             
             self = date
         case .secondsSince1970:
-            let value: Double = try mapper.decodeValue()
+            let value: Double = try container.decodeValue()
             
             self = Date(timeIntervalSince1970: value)
             
         case .millisecondsSince1970:
-            let value: Double = try mapper.decodeValue()
+            let value: Double = try container.decodeValue()
             
             self = Date(timeIntervalSince1970: value/1000.0)
             
         case .iso8601:
-            let value: String = try mapper.decodeValue()
+            let value: String = try container.decodeValue()
             
             guard let date = _iso8601Formatter.date(from: value) else {
                 throw Mapper.Error.dataCorrupted(key: mapper.keyPath, actual: value, debugDescription: "Expected date string to be ISO8601-formatted.")
@@ -198,9 +204,7 @@ extension Date: Mappable {
             self = date
             
         case .custom(let block):
-            let value = try mapper.decodeJSONObjectValue()
-            
-            self = try block(value)
+            self = try block(container.rawValue)
         }
     }
 }
@@ -214,7 +218,9 @@ private func isNotBoolean(number: NSNumber) -> Bool {
 extension Int: Mappable {
     
     public init(mapper: Mapper) throws {
-        let value = try mapper.decodeJSONObjectValue()
+        let container = try mapper.singleMapperValue()
+        
+        let value = container.rawValue
         
         let type = Int.self
         
@@ -235,7 +241,9 @@ extension Int: Mappable {
 extension Int8: Mappable {
     
     public init(mapper: Mapper) throws {
-        let value = try mapper.decodeJSONObjectValue()
+        let container = try mapper.singleMapperValue()
+        
+        let value = container.rawValue
         
         let type = Int8.self
         
@@ -256,7 +264,9 @@ extension Int8: Mappable {
 extension Int16: Mappable {
     
     public init(mapper: Mapper) throws {
-        let value = try mapper.decodeJSONObjectValue()
+        let container = try mapper.singleMapperValue()
+        
+        let value = container.rawValue
         
         let type = Int16.self
         
@@ -277,7 +287,9 @@ extension Int16: Mappable {
 extension Int32: Mappable {
     
     public init(mapper: Mapper) throws {
-        let value = try mapper.decodeJSONObjectValue()
+        let container = try mapper.singleMapperValue()
+        
+        let value = container.rawValue
         
         let type = Int32.self
         
@@ -298,7 +310,9 @@ extension Int32: Mappable {
 extension Int64: Mappable {
     
     public init(mapper: Mapper) throws {
-        let value = try mapper.decodeJSONObjectValue()
+        let container = try mapper.singleMapperValue()
+        
+        let value = container.rawValue
         
         let type = Int64.self
         
@@ -319,7 +333,9 @@ extension Int64: Mappable {
 extension UInt: Mappable {
     
     public init(mapper: Mapper) throws {
-        let value = try mapper.decodeJSONObjectValue()
+        let container = try mapper.singleMapperValue()
+        
+        let value = container.rawValue
         
         let type = UInt.self
         
@@ -340,7 +356,9 @@ extension UInt: Mappable {
 extension UInt8: Mappable {
     
     public init(mapper: Mapper) throws {
-        let value = try mapper.decodeJSONObjectValue()
+        let container = try mapper.singleMapperValue()
+        
+        let value = container.rawValue
         
         let type = UInt8.self
         
@@ -361,7 +379,9 @@ extension UInt8: Mappable {
 extension UInt16: Mappable {
     
     public init(mapper: Mapper) throws {
-        let value = try mapper.decodeJSONObjectValue()
+        let container = try mapper.singleMapperValue()
+        
+        let value = container.rawValue
         
         let type = UInt16.self
         
@@ -382,7 +402,9 @@ extension UInt16: Mappable {
 extension UInt32: Mappable {
     
     public init(mapper: Mapper) throws {
-        let value = try mapper.decodeJSONObjectValue()
+        let container = try mapper.singleMapperValue()
+        
+        let value = container.rawValue
         
         let type = UInt32.self
         
@@ -403,7 +425,9 @@ extension UInt32: Mappable {
 extension UInt64: Mappable {
     
     public init(mapper: Mapper) throws {
-        let value = try mapper.decodeJSONObjectValue()
+        let container = try mapper.singleMapperValue()
+        
+        let value = container.rawValue
         
         let type = UInt64.self
         
@@ -424,7 +448,9 @@ extension UInt64: Mappable {
 extension Double: Mappable {
     
     public init(mapper: Mapper) throws {
-        let value = try mapper.decodeJSONObjectValue()
+        let container = try mapper.singleMapperValue()
+        
+        let value = container.rawValue
         
         let type = Double.self
         
@@ -468,7 +494,9 @@ extension Double: Mappable {
 extension Float: Mappable {
     
     public init(mapper: Mapper) throws {
-        let value = try mapper.decodeJSONObjectValue()
+        let container = try mapper.singleMapperValue()
+        
+        let value = container.rawValue
         
         let type = Float.self
         

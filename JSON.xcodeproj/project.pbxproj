@@ -13,6 +13,9 @@
 		0D7CDEBB1AD210A10069F678 /* StringExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D7CDEBA1AD210A10069F678 /* StringExt.swift */; };
 		0D92207D21EFB3D100810320 /* Dictionary+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D92207C21EFB3D100810320 /* Dictionary+Ext.swift */; };
 		0D92207F21F11D9200810320 /* Key.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D92207E21F11D9200810320 /* Key.swift */; };
+		0D92208121F1839600810320 /* KeyedMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D92208021F1839600810320 /* KeyedMapper.swift */; };
+		0D92208321F1898F00810320 /* UnkeyedMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D92208221F1898F00810320 /* UnkeyedMapper.swift */; };
+		0D92208521F18E8F00810320 /* SingleValueMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D92208421F18E8F00810320 /* SingleValueMapper.swift */; };
 		0D9BEB5520433D010033AF26 /* tweets.json in Resources */ = {isa = PBXBuildFile; fileRef = 0D032F8B1A8CFE79002E8C2D /* tweets.json */; };
 		0D9BEB5720433D300033AF26 /* TwitterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D9BEB5620433D300033AF26 /* TwitterTests.swift */; };
 		0DA7A1151A8BBF5800749F82 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DA7A1141A8BBF5800749F82 /* AppDelegate.swift */; };
@@ -43,6 +46,9 @@
 		0D7CDEBA1AD210A10069F678 /* StringExt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExt.swift; sourceTree = "<group>"; };
 		0D92207C21EFB3D100810320 /* Dictionary+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Dictionary+Ext.swift"; sourceTree = "<group>"; };
 		0D92207E21F11D9200810320 /* Key.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Key.swift; sourceTree = "<group>"; };
+		0D92208021F1839600810320 /* KeyedMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyedMapper.swift; sourceTree = "<group>"; };
+		0D92208221F1898F00810320 /* UnkeyedMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnkeyedMapper.swift; sourceTree = "<group>"; };
+		0D92208421F18E8F00810320 /* SingleValueMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleValueMapper.swift; sourceTree = "<group>"; };
 		0D9BEB5620433D300033AF26 /* TwitterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwitterTests.swift; sourceTree = "<group>"; };
 		0DA7A10F1A8BBF5800749F82 /* JSON.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JSON.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0DA7A1131A8BBF5800749F82 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -114,6 +120,9 @@
 				0DA7A11D1A8BBF5800749F82 /* LaunchScreen.xib */,
 				0D51932E1FEF38C4005A80BB /* Adapter.swift */,
 				0DA7A1341A8BBF6500749F82 /* Mapper.swift */,
+				0D92208021F1839600810320 /* KeyedMapper.swift */,
+				0D92208221F1898F00810320 /* UnkeyedMapper.swift */,
+				0D92208421F18E8F00810320 /* SingleValueMapper.swift */,
 				0DC904FE203E740500BA00AD /* Mappable.swift */,
 				0D92207E21F11D9200810320 /* Key.swift */,
 				0DAAA5C7204085FC0080E0AC /* PrivateUtilities.swift */,
@@ -258,8 +267,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0D92208321F1898F00810320 /* UnkeyedMapper.swift in Sources */,
 				0DAAA5C8204085FC0080E0AC /* PrivateUtilities.swift in Sources */,
 				0D92207F21F11D9200810320 /* Key.swift in Sources */,
+				0D92208121F1839600810320 /* KeyedMapper.swift in Sources */,
 				0DA7A1351A8BBF6500749F82 /* Mapper.swift in Sources */,
 				0D92207D21EFB3D100810320 /* Dictionary+Ext.swift in Sources */,
 				0DC904FF203E740500BA00AD /* Mappable.swift in Sources */,
@@ -268,6 +279,7 @@
 				0DA7A1151A8BBF5800749F82 /* AppDelegate.swift in Sources */,
 				0D4FDFA01AC4AC350083ADFA /* UIColorExt.swift in Sources */,
 				0D7CDEBB1AD210A10069F678 /* StringExt.swift in Sources */,
+				0D92208521F18E8F00810320 /* SingleValueMapper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,5 +1,5 @@
 //
-//  JSONAdapter.swift
+//  Adapter.swift
 //  JSON
 //
 //  Created by Juan Alvarez on 12/23/17.

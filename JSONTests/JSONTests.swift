@@ -91,22 +91,29 @@ class JSONTests: XCTestCase {
         }
         
         init(mapper: Mapper) throws {
-            string = try mapper.decodeValue(forKeyPath: Keys.string)
-            int = try mapper.decodeValue(forKeyPath: Keys.int)
-            bool = try mapper.decodeValue(forKeyPath: Keys.bool)
-            double = try mapper.decodeValue(forKeyPath: Keys.double)
-            float = try mapper.decodeValue(forKeyPath: Keys.float)
-            dictionary = try mapper.decodeValue(forKeyPath: Keys.dictionary)
-            enumValue = try mapper.decodeValue(forKeyPath: Keys.enumValue)
-            date = try mapper.decodeValue(forKeyPath: Keys.date)
-            color = mapper.transform(keyPath: Keys.color, block: { (value) -> UIColor in
-                return UIColor.fromHex(hex: value)
-            })
+            let container = try mapper.keyedMapperValue()
             
-            stringArray = try mapper.decodeValue(forKeyPath: Keys.stringArray)
-            intArray = try mapper.decodeValue(forKeyPath: Keys.intArray)
-            floatArray = try mapper.decodeValue(forKeyPath: Keys.floatArray)
-            enumArray = try mapper.decodeValue(forKeyPath: Keys.enumArray)
+            string = try container.decodeValue(forKeyPath: Keys.string)
+            int = try container.decodeValue(forKeyPath: Keys.int)
+            bool = try container.decodeValue(forKeyPath: Keys.bool)
+            double = try container.decodeValue(forKeyPath: Keys.double)
+            float = try container.decodeValue(forKeyPath: Keys.float)
+            dictionary = try container.decodeValue(forKeyPath: Keys.dictionary)
+            enumValue = try container.decodeValue(forKeyPath: Keys.enumValue)
+            date = try container.decodeValue(forKeyPath: Keys.date)
+            
+            color = {
+                guard let value: String = container.decode(forKeyPath: Keys.color) else {
+                    return nil
+                }
+                
+                return UIColor.fromHex(hex: value)
+            }()
+            
+            stringArray = try container.decodeValue(forKeyPath: Keys.stringArray)
+            intArray = try container.decodeValue(forKeyPath: Keys.intArray)
+            floatArray = try container.decodeValue(forKeyPath: Keys.floatArray)
+            enumArray = try container.decodeValue(forKeyPath: Keys.enumArray)
         }
     }
     

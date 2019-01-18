@@ -42,18 +42,6 @@ public final class Mapper {
         self.keyPath = keyPath
         self.options = options
     }
-    
-    func value(for keyPath: Key) -> Any? {
-        guard let dict = self.rawValue as? [String: Any] else {
-            return nil
-        }
-        
-       return dict.value(forKeyPath: keyPath.keys().map { self.keyDecodingStrategy.convert($0.stringValue()) })
-    }
-    
-    func contains(keyPath: [String]) -> Bool {
-        return self.value(for: keyPath) != nil
-    }
 }
 
 extension Mapper {
@@ -81,151 +69,90 @@ extension Mapper {
     }
 }
 
-// MARK: - JSON Object -
+// MARK: - Keyed Mappers -
 
 extension Mapper {
     
-    public func decodeJSONObjectValue() throws -> Any {
+    public func keyedMapperValue() throws -> KeyedMapper {
         guard let value = self.rawValue else {
-            throw self.keyPathMissingError(self.keyPath)
+            throw Error.keyPathMissing(key: "", debugDescription: "Top value is nil")
         }
         
-        return value
-    }
-    
-    public func decodeJSONObjectValue(forKeyPath keyPath: Key) throws -> Any {
-        guard let value = self.value(for: keyPath) else {
-            throw self.keyPathMissingError(self.keyPath)
+        let actualType = Swift.type(of: value)
+        
+        guard let dict = self.rawValue as? [String: Any] else {
+            throw Mapper.Error.invalidType(key: "",
+                                           expected: [String: Any].self,
+                                           actual: actualType,
+                                           debugDescription: "Expected \([String: Any].self) value but found \(actualType) instead.")
         }
         
-        return value
+        let newMapper = KeyedMapper(mapper: self, wrapping: dict)
+        
+        return newMapper
     }
     
-    public func decodeJSONObject() -> Any? {
-        return try? decodeJSONObjectValue()
-    }
-    
-    public func decodeJSONObject(forKeyPath keyPath: Key) throws -> Any? {
-        return try? decodeJSONObjectValue(forKeyPath: keyPath)
+    public func keyedMapper() throws -> KeyedMapper? {
+        return try? keyedMapperValue()
     }
 }
 
-// MARK: - JSON Object Array -
+// MARK: - Unkeyed Mappers -
 
 extension Mapper {
     
-    public func decodeJSONArrayValue() throws -> [Any] {
+    public func unkeyedMapperValue() throws -> UnkeyedMapper {
         guard let value = self.rawValue else {
-            throw self.keyPathMissingError(self.keyPath)
+            throw Mapper.Error.keyPathMissing(key: keyPath, debugDescription: "No value associated with keyPath \(keyPath)")
         }
         
-        guard let newValue = value as? [Any] else {
-            throw self.invalidTypeError(keyPath, expected: [Any].self, value: value)
+        guard let array = value as? [Any] else {
+            throw Mapper.Error.invalidType(key: keyPath,
+                                           expected: [Any].self,
+                                           actual: type(of: value),
+                                           debugDescription: "Expected \([Any].self) value but found \(type(of: value)) instead.")
         }
         
-        return newValue
+        let newMapper = UnkeyedMapper(mapper: self, wrapping: array)
+        
+        return newMapper
     }
     
-    public func decodeJSONArrayValue(forKeyPath keyPath: Key) throws -> [Any] {
-        guard let value = self.value(for: keyPath) else {
-            throw self.keyPathMissingError(keyPath)
-        }
-        
-        guard let newValue = value as? [Any] else {
-            throw self.invalidTypeError(keyPath, expected: [Any].self, value: value)
-        }
-        
-        return newValue
-    }
-    
-    public func decodeJSONArray() -> [Any]? {
-        return try? decodeJSONArrayValue()
-    }
-    
-    public func decodeJSONArray(forKeyPath keyPath: Key) -> [Any]? {
-        return try? decodeJSONArrayValue(forKeyPath: keyPath)
+    public func unkeyedMapper() throws -> UnkeyedMapper? {
+        return try? unkeyedMapperValue()
     }
 }
 
-// MARK: - Mappable -
+// MARK: - Single Mapper -
 
 extension Mapper {
     
-    public func decodeValue<T>() throws -> T where T: Mappable {
+    public func singleMapperValue() throws -> SingleValueMapper {
         guard let value = self.rawValue else {
-            throw self.keyPathMissingError(self.keyPath)
+            throw Mapper.Error.keyPathMissing(key: keyPath, debugDescription: "No value associated with keyPath \(self.keyPath)")
         }
         
-        let mapper = Mapper(value: value, keyPath: self.keyPath, options: self.options)
-        return try T(mapper: mapper)
-    }
-    
-    public func decode<T>() -> T? where T: Mappable {
-        return try? self.decodeValue()
-    }
-    
-    public func decodeValue<T>(forKeyPath keyPath: Key) throws -> T where T: Mappable {
-        guard let value = self.value(for: keyPath) else {
-            throw self.keyPathMissingError(keyPath)
-        }
+        let newMapper = SingleValueMapper(mapper: self, wrapping: value)
         
-        let mapper = Mapper(value: value, keyPath: keyPath, options: self.options)
-        return try T(mapper: mapper)
-    }
-    
-    public func decode<T>(forKeyPath keyPath: Key) -> T? where T: Mappable {
-        return try? decodeValue(forKeyPath: keyPath)
-    }
-}
-
-// MARK: - Swift Decodable -
-
-extension Mapper {
-    
-    public func decodeValue<T>(decoder: JSONDecoder) throws -> T where T: Decodable {
-        guard let value = self.rawValue else {
-            throw self.keyPathMissingError(self.keyPath)
-        }
-        
-        let data = try JSONSerialization.data(withJSONObject: value, options: [])
-        
-        return try decoder.decode(T.self, from: data)
-    }
-    
-    public func decode<T>(decoder: JSONDecoder) throws -> T? where T: Decodable {
-        return try? decodeValue(decoder: decoder)
-    }
-    
-    public func decodeValue<T>(forKeyPath keyPath: Key, decoder: JSONDecoder) throws -> T where T: Decodable {
-        guard let value = self.value(for: keyPath) else {
-            throw self.keyPathMissingError(keyPath)
-        }
-        
-        let data = try JSONSerialization.data(withJSONObject: value, options: [])
-        
-        return try decoder.decode(T.self, from: data)
-    }
-    
-    public func decode<T>(forKeyPath keyPath: Key, decoder: JSONDecoder) -> T? where T: Decodable {
-        return try? decodeValue(forKeyPath: keyPath, decoder: decoder)
+        return newMapper
     }
 }
 
 // MARK: - Transforms -
 
-extension Mapper {
-    
-    public func transformValue<T, U>(keyPath: Key, block: (_ value: T) -> U) throws -> U {
-        let value = self.value(for: keyPath)
-        
-        guard let newValue = value as? T else {
-            throw invalidTypeError(keyPath, expected: T.self, value: type(of: value))
-        }
-        
-        return block(newValue)
-    }
-    
-    public func transform<T, U>(keyPath: Key, block: (_ value: T) -> U) -> U? {
-        return try? transformValue(keyPath: keyPath, block: block)
-    }
-}
+//extension Mapper {
+//
+//    public func transformValue<T, U>(keyPath: Key, block: (_ value: T) -> U) throws -> U {
+//        let value = self.value(for: keyPath)
+//
+//        guard let newValue = value as? T else {
+//            throw invalidTypeError(keyPath, expected: T.self, value: type(of: value))
+//        }
+//
+//        return block(newValue)
+//    }
+//
+//    public func transform<T, U>(keyPath: Key, block: (_ value: T) -> U) -> U? {
+//        return try? transformValue(keyPath: keyPath, block: block)
+//    }
+//}

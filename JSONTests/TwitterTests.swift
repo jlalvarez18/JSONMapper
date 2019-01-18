@@ -163,22 +163,25 @@ struct Tweet: Mappable {
     
     enum Keys: String, Key {
         case user
-        case screenName = "user.screen_name"
         case text
         case createdAt
         case favorited
         case language = "lang"
+        case urlItems = "entities.urls"
+        case replayToStatusId = "in_reply_to_status_id"
     }
     
     init(mapper: Mapper) throws {
-        language = mapper.decode(forKeyPath: Keys.language)
-        user = try mapper.decodeValue(forKeyPath: Keys.user)
-        screenName = try mapper.decodeValue(forKeyPath: Keys.screenName)
-        text = try mapper.decodeValue(forKeyPath: Keys.text)
-        createdAt = try mapper.decodeValue(forKeyPath: Keys.createdAt)
-        favorited = try mapper.decodeValue(forKeyPath: Keys.favorited)
-        urlItems = try mapper.decodeValue(forKeyPath: ["entities", "urls"], decoder: JSONDecoder())
-        replyToStatus = mapper.decode(forKeyPath: "in_reply_to_status_id")
+        let container = try mapper.keyedMapperValue()
+        
+        language = container.decode(forKeyPath: Keys.language)
+        user = try container.decodeValue(forKeyPath: Keys.user)
+        screenName = try container.decodeValue(forKeyPath: ["user", "screen_name"])
+        text = try container.decodeValue(forKeyPath: Keys.text)
+        createdAt = try container.decodeValue(forKeyPath: Keys.createdAt)
+        favorited = try container.decodeValue(forKeyPath: Keys.favorited)
+        urlItems = try container.decodeValue(forKeyPath: Keys.urlItems, decoder: JSONDecoder())
+        replyToStatus = container.decode(forKeyPath: Keys.replayToStatusId)
     }
 }
 
@@ -194,20 +197,37 @@ struct User: Mappable {
     let description: String
     let backgroundColor: UIColor?
     
+    enum Keys: String, Key {
+        case name
+        case idString = "id_str"
+        case id
+        case createdAt = "created_at"
+        case url
+        case urlItems = "entities.description.urls"
+        case defaultProfile = "default_profile"
+        case followersCount = "followers_count"
+        case description
+        case backgroundColor = "profile_background_color"
+    }
+    
     init(mapper: Mapper) throws {
-        name = try mapper.decodeValue(forKeyPath: "name")
-        idString = try mapper.decodeValue(forKeyPath: "id_str")
-        id = try mapper.decodeValue(forKeyPath: "id")
-        createdAt = try mapper.decodeValue(forKeyPath: "created_at")
-        urlItems = try mapper.decodeValue(forKeyPath: ["entities", "description", "urls"], decoder: JSONDecoder())
-        defaultProfile = try mapper.decodeValue(forKeyPath: "default_profile")
-        followersCount = try mapper.decodeValue(forKeyPath: "followers_count")
-        url = mapper.decode(forKeyPath: "url")
-        description = try mapper.decodeValue(forKeyPath: "description")
+        let container = try mapper.keyedMapperValue()
         
-        backgroundColor = mapper.transform(keyPath: "profile_background_color", block: { (value) -> UIColor in
-            return UIColor.fromHex(hex: value)
-        })
+        name = try container.decodeValue(forKeyPath: Keys.name)
+        idString = try container.decodeValue(forKeyPath: Keys.idString)
+        id = try container.decodeValue(forKeyPath: Keys.id)
+        createdAt = try container.decodeValue(forKeyPath: Keys.createdAt)
+        urlItems = try container.decodeValue(forKeyPath: Keys.urlItems, decoder: JSONDecoder())
+        defaultProfile = try container.decodeValue(forKeyPath: Keys.defaultProfile)
+        followersCount = try container.decodeValue(forKeyPath: Keys.followersCount)
+        url = container.decode(forKeyPath: Keys.url)
+        description = try container.decodeValue(forKeyPath: Keys.description)
+        
+        if let bgColor: String = container.decode(forKeyPath: Keys.backgroundColor) {
+            backgroundColor = UIColor.fromHex(hex: bgColor)
+        } else {
+            backgroundColor = nil
+        }
     }
 }
 
