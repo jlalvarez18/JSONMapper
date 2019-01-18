@@ -12,7 +12,10 @@ pod 'JSONMapper', '~> 0.0.1'
 # TODO
 - more thorough testing
 
-# Example
+## Example
+
+### Model
+
 ``` Swift
 import Foundation
 import UIKit
@@ -110,4 +113,23 @@ struct URLItem: Decodable {
         case indices
     }
 }
+```
+
+### Decoding
+
+``` Swift
+import JSON
+
+let dateFormatter = DateFormatter()
+dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+dateFormatter.dateFormat = "EEE MMM dd HH:mm:ss Z yyyy"
+        
+let adapter = JSON.Adapter()
+adapter.dateDecodingStrategy = .formatted(dateFormatter)
+adapter.keyDecodingStrategy = .convertToSnakeCase
+        
+let data: Data = // data from a local file, network, etc
+let tweets: [Tweet] = try self.adapter.decode(data: data)
+
+print(tweets)
 ```
